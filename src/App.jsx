@@ -413,7 +413,7 @@ const ItineraryDetail = ({ itinerary, onBack }) => {
 };
 
 // =========================================================================
-// 組件 3: 多日行程列表視圖 (MultiDayItinerary) - 已移除外部容器，僅保留內容
+// 組件 3: 多日行程列表視圖 (MultiDayItinerary)
 // =========================================================================
 
 const MultiDayItinerary = () => {
@@ -440,7 +440,11 @@ const MultiDayItinerary = () => {
           </thead>
           <tbody className="divide-y divide-gray-200">
             {MULTI_DAY_ITINERARY.map((item, index) => (
-              <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+              <tr 
+                key={index} 
+                // 藍白間隔底色
+                className={index % 2 === 0 ? 'bg-white' : 'bg-blue-50'}
+              >
                 <td className="px-3 py-4 whitespace-nowrap text-sm font-semibold text-purple-600">
                   {item.day}
                 </td>
@@ -465,9 +469,7 @@ const MultiDayItinerary = () => {
         </table>
       </div>
       
-      <footer className="text-center text-gray-500 text-sm mt-10 py-4 border-t">
-        <p>資料來源: 行程規劃表</p>
-      </footer>
+      {/* 移除此處的 footer (資料來源) */}
     </>
   );
 };
@@ -544,7 +546,7 @@ export default function App() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center">
             <Mountain className="w-8 h-8 mr-3" />
-            瑞士行程
+            瑞士行程 {/* <-- 標題已修改為「瑞士行程」 */}
           </h1>
           <p className="text-white text-opacity-90 mt-1">
             當日行程可根據天氣切換，或查看跨區多日規劃。
