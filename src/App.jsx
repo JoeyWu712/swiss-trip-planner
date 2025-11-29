@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Sun, CloudRain, TrainFront, CableCar, BusFront, Map, ArrowRight, Home, CarFront, Users, Building2, CalendarDays, Mountain, Clock, Plane } from 'lucide-react';
 
 // =========================================================================
-// 數據 1: 因特拉肯當日行程 (12 個方案)
+// 數據 1: 因特拉肯當日行程 (12 個方案) - 保持不變
 // =========================================================================
 const ITINERARIES = [
   // 晴天方案 (Sunny Itineraries S1-S6)
@@ -199,7 +199,7 @@ const ITINERARIES = [
 ];
 
 // =========================================================================
-// 數據 2: 8 天跨區域經典行程 (來自用戶圖片)
+// 數據 2: 8 天跨區域經典行程 (新增 base_map_link 欄位)
 // =========================================================================
 const MULTI_DAY_ITINERARY = [
   {
@@ -208,7 +208,8 @@ const MULTI_DAY_ITINERARY = [
     destination: "抵達 ZRH -> 琉森。下午：市區觀光，獅子紀念碑、卡貝爾橋。",
     travel: "ZRH -> 琉森：1 小時 (火車)",
     recommendation: "直達城際列車 (IC)",
-    duration: "1 小時"
+    duration: "1 小時",
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Lucerne+train+station"
   },
   {
     day: "12/29 (Day 2)",
@@ -216,7 +217,8 @@ const MULTI_DAY_ITINERARY = [
     destination: "上午：琉森 -> 因特拉肯。下午：瑞吉山 (Rigi Kulm) 或 哈德昆 (Harder Kulm) (擇一登頂)。",
     travel: "琉森 -> 因特拉肯：1 小時 50 分鐘 (黃金列車)",
     recommendation: "黃金列車專線 (Golden Pass Express)",
-    duration: "1 小時 50 分鐘"
+    duration: "1 小時 50 分鐘",
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Interlaken+Ost+train+station"
   },
   {
     day: "12/30 (Day 3)",
@@ -224,7 +226,8 @@ const MULTI_DAY_ITINERARY = [
     destination: "少女峰 (Jungfraujoch) 登頂一日遊。風雪日：雪朗峰 (Piz Gloria) 或 菲斯特 (First) 纜車。",
     travel: "單程約 3 小時 15 分鐘 (齒輪火車)",
     recommendation: "確保行程預訂。",
-    duration: "約 3 小時 15 分鐘 (單程)"
+    duration: "約 3 小時 15 分鐘 (單程)",
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Interlaken+Ost+train+station"
   },
   {
     day: "12/31 (Day 4)",
@@ -232,7 +235,8 @@ const MULTI_DAY_ITINERARY = [
     destination: "Touch the Mountains 慶典。新年夜：勞特布倫嫩 (Lauterbrunnen)、米倫 (Murren) 或 文根 (Wengen) 擇一遊覽。",
     travel: "因特拉肯 -> First 約 40 分鐘 / 勞特布倫嫩約 30 分鐘 (火車)",
     recommendation: "確認新年夜交通。",
-    duration: "40 分鐘 - 1 小時"
+    duration: "40 分鐘 - 1 小時",
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Interlaken+Ost+train+station"
   },
   {
     day: "1/1 (Day 5)",
@@ -240,7 +244,8 @@ const MULTI_DAY_ITINERARY = [
     destination: "文根 (Wengen) 或 米倫 (Murren) 擇一，享受安靜的山居生活。",
     travel: "勞特布倫嫩：約 30 分鐘 (火車)",
     recommendation: "確認纜車開放時間。",
-    duration: "約 30 分鐘"
+    duration: "約 30 分鐘",
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Interlaken+Ost+train+station"
   },
   {
     day: "1/2 (Day 6)",
@@ -248,7 +253,8 @@ const MULTI_DAY_ITINERARY = [
     destination: "因特拉肯 -> 策馬特。下午：葛納葛特 (Gornergrat) 觀景臺，或 馬特洪峰冰川天堂 (Matterhorn Glacier Paradise)。",
     travel: "因特拉肯 -> 策馬特：約 2 小時 40 分鐘 (火車)",
     recommendation: "需在 Spiez 及 Visp 轉乘。",
-    duration: "2 小時 40 分鐘 - 3 小時 15 分鐘"
+    duration: "2 小時 40 分鐘 - 3 小時 15 分鐘",
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Zermatt+train+station"
   },
   {
     day: "1/3 (Day 7)",
@@ -256,7 +262,8 @@ const MULTI_DAY_ITINERARY = [
     destination: "葛納葛特或 馬特洪峰冰川天堂 (擇一)。",
     travel: "策馬特 -> 葛納葛特：約 45 分鐘 (齒輪火車)",
     recommendation: "擇天氣晴朗時上山。",
-    duration: "45 分鐘"
+    duration: "45 分鐘",
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Zermatt+train+station"
   },
   {
     day: "1/4 (Day 8)",
@@ -264,12 +271,13 @@ const MULTI_DAY_ITINERARY = [
     destination: "上午：策馬特 -> 米蘭。下午：米蘭市區觀光 / 大學區。",
     travel: "策馬特 -> 米蘭：約 3 小時 45 分鐘 (火車)",
     recommendation: "需在 Visp/Brig 轉乘，搭乘歐洲之星 (EuroCity, EC) 至米蘭。",
-    duration: "3 小時 45 分鐘 - 4 小時"
+    duration: "3 小時 45 分鐘 - 4 小時",
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Milano+Centrale+train+station"
   }
 ];
 
 
-// 獲取交通模式圖標的輔助函數 (與之前相同)
+// 獲取交通模式圖標的輔助函數 (保持不變)
 const getModeIcon = (mode) => {
   switch (mode.split('(')[0].trim()) {
     case '火車':
@@ -438,19 +446,35 @@ const MultiDayItinerary = () => {
               <th className="px-3 py-3 text-left text-xs font-bold text-purple-700 uppercase tracking-wider w-3/12">交通說明</th>
             </tr>
           </thead>
-          <tbody className="divide-gray-200"> {/* 移除 divide-y，改在 tr 上添加底部實線 */}
+          <tbody className="divide-gray-200">
             {MULTI_DAY_ITINERARY.map((item, index) => (
               <tr 
                 key={index} 
-                // 添加 border-b-2 來實現實線分割，並增加 hover 效果
+                // 添加 border-b-2 實現實線分割
                 className={`${index % 2 === 0 ? 'bg-white' : 'bg-blue-50'} border-b-2 border-purple-200 hover:bg-purple-50 transition duration-150`}
               >
                 <td className="px-3 py-4 whitespace-nowrap text-sm font-semibold text-purple-600">
                   {item.day}
                 </td>
+                
+                {/* 增加 Google 地圖連結的欄位 */}
                 <td className="px-3 py-4 whitespace-normal text-sm text-gray-900 font-medium">
-                  {item.base}
+                  <div className="flex flex-col items-start space-y-1">
+                    <span>{item.base}</span>
+                    {item.base_map_link && (
+                        <a
+                            href={item.base_map_link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center text-xs font-medium text-indigo-600 hover:text-indigo-800 transition duration-150 bg-indigo-100 rounded-full px-2 py-1 shadow-sm hover:shadow-md"
+                        >
+                            <Map className="w-3 h-3 mr-1" />
+                            <span>車站地圖</span>
+                        </a>
+                    )}
+                  </div>
                 </td>
+
                 <td className="px-3 py-4 whitespace-normal text-sm text-gray-600">
                   <p className="font-semibold text-gray-800">{item.destination}</p>
                   <div className="flex items-center text-xs text-indigo-500 mt-1">
@@ -473,7 +497,7 @@ const MultiDayItinerary = () => {
 };
 
 // =========================================================================
-// 核心組件: App
+// 核心組件: App - 保持不變
 // =========================================================================
 
 export default function App() {
