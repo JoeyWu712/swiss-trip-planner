@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 // 導入 Lucide Icons 用於交通模式和 UI 裝飾
-import { Sun, CloudRain, TrainFront, CableCar, BusFront, Map, ArrowRight, Home, CarFront, Users, Building2, CalendarDays, Mountain, Clock, Plane, Hotel, MapPin, ExternalLink, RefreshCw } from 'lucide-react';
+import { Sun, CloudRain, TrainFront, CableCar, BusFront, Map, ArrowRight, Home, CarFront, Users, Building2, CalendarDays, Mountain, Clock, Plane, Hotel, MapPin, ExternalLink, RefreshCw, Landmark, ShoppingBag, Ship, MapPinned, Palette, Wheat, ScrollText } from 'lucide-react'; 
 
 // =========================================================================
-// 新增數據 1: 飯店住宿資訊
+// 新增/擴展數據 1: 飯店住宿資訊 (共 20 天，新增佛羅倫斯與羅馬住宿)
 // =========================================================================
 const ACCOMMODATION_DATA = [
   {
@@ -26,9 +26,27 @@ const ACCOMMODATION_DATA = [
   },
   {
     base: "米蘭 (Milan)",
-    dates: "1/4",
+    dates: "1/4 - 1/6", 
     hotelName: "Hotel Milano Centrale",
     address: "Piazza Duca d'Aosta, 20124 Milano MI, Italy",
+  },
+  {
+    base: "威尼斯 (Venice)",
+    dates: "1/6 - 1/8", // 延長至兩晚
+    hotelName: "Hotel Danieli, a Luxury Collection Hotel",
+    address: "Riva degli Schiavoni, Castello, 4196, 30122 Venezia VE, Italy",
+  },
+  {
+    base: "佛羅倫斯 (Florence)",
+    dates: "1/8 - 1/11", // 新增佛羅倫斯三晚
+    hotelName: "The St. Regis Florence",
+    address: "Piazza Ognissanti, 1, 50123 Firenze FI, Italy",
+  },
+  {
+    base: "羅馬 (Rome)",
+    dates: "1/11 - 1/16", // 新增羅馬五晚
+    hotelName: "Rome Cavalieri, A Waldorf Astoria Hotel",
+    address: "Via Alberto Cadlolo, 101, 00136 Roma RM, Italy",
   },
 ];
 
@@ -241,9 +259,10 @@ const ITINERARIES = [
 ];
 
 // =========================================================================
-// 數據 3: 8 天跨區域經典行程
+// 數據 3: 20 天跨區域經典行程 (瑞義之旅) - 擴展到 1/16
 // =========================================================================
 const MULTI_DAY_ITINERARY = [
+  // Day 1-7: 瑞士 (保持不變)
   {
     day: "12/28 (Day 1)",
     base: "琉森 (Lucerne)",
@@ -251,7 +270,8 @@ const MULTI_DAY_ITINERARY = [
     travel: "ZRH -> 琉森：1 小時 (火車)",
     recommendation: "直達城際列車 (IC)",
     duration: "1 小時",
-    base_map_link: "https://www.google.com/maps/search/?api=1&query=Lucerne+train+station"
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Lucerne+train+station",
+    country: "Switzerland"
   },
   {
     day: "12/29 (Day 2)",
@@ -260,7 +280,8 @@ const MULTI_DAY_ITINERARY = [
     travel: "琉森 -> 因特拉肯：1 小時 50 分鐘 (黃金列車)",
     recommendation: "黃金列車專線 (Golden Pass Express)",
     duration: "1 小時 50 分鐘",
-    base_map_link: "https://www.google.com/maps/search/?api=1&query=Interlaken+Ost+train+station"
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Interlaken+Ost+train+station",
+    country: "Switzerland"
   },
   {
     day: "12/30 (Day 3)",
@@ -269,7 +290,8 @@ const MULTI_DAY_ITINERARY = [
     travel: "單程約 3 小時 15 分鐘 (齒輪火車)",
     recommendation: "確保行程預訂。",
     duration: "約 3 小時 15 分鐘 (單程)",
-    base_map_link: "https://www.google.com/maps/search/?api=1&query=Interlaken+Ost+train+station"
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Interlaken+Ost+train+station",
+    country: "Switzerland"
   },
   {
     day: "12/31 (Day 4)",
@@ -278,7 +300,8 @@ const MULTI_DAY_ITINERARY = [
     travel: "因特拉肯 -> First 約 40 分鐘 / 勞特布倫嫩約 30 分鐘 (火車)",
     recommendation: "確認新年夜交通。",
     duration: "40 分鐘 - 1 小時",
-    base_map_link: "https://www.google.com/maps/search/?api=1&query=Interlaken+Ost+train+station"
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Interlaken+Ost+train+station",
+    country: "Switzerland"
   },
   {
     day: "1/1 (Day 5)",
@@ -287,7 +310,8 @@ const MULTI_DAY_ITINERARY = [
     travel: "勞特布倫嫩：約 30 分鐘 (火車)",
     recommendation: "確認纜車開放時間。",
     duration: "約 30 分鐘",
-    base_map_link: "https://www.google.com/maps/search/?api=1&query=Interlaken+Ost+train+station"
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Interlaken+Ost+train+station",
+    country: "Switzerland"
   },
   {
     day: "1/2 (Day 6)",
@@ -296,26 +320,152 @@ const MULTI_DAY_ITINERARY = [
     travel: "因特拉肯 -> 策馬特：約 2 小時 40 分鐘 (火車)",
     recommendation: "需在 Spiez 及 Visp 轉乘。",
     duration: "2 小時 40 分鐘 - 3 小時 15 分鐘",
-    base_map_link: "https://www.google.com/maps/search/?api=1&query=Zermatt+train+station"
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Zermatt+train+station",
+    country: "Switzerland"
   },
   {
     day: "1/3 (Day 7)",
     base: "策馬特",
-    destination: "葛納葛特或 馬特洪峰冰川天堂 (擇一)。",
+    destination: "葛納葛特或 馬特洪峰冰川天堂 (擇一)。傍晚：策馬特市區散步。",
     travel: "策馬特 -> 葛納葛特：約 45 分鐘 (齒輪火車)",
     recommendation: "擇天氣晴朗時上山。",
     duration: "45 分鐘",
-    base_map_link: "https://www.google.com/maps/search/?api=1&query=Zermatt+train+station"
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Zermatt+train+station",
+    country: "Switzerland"
   },
+  // Day 8-11: 米蘭與威尼斯 (義大利北部)
   {
     day: "1/4 (Day 8)",
-    base: "米蘭 (Milan) / 策馬特",
-    destination: "上午：策馬特 -> 米蘭。下午：米蘭市區觀光 / 大學區。",
-    travel: "策馬特 -> 米蘭：約 3 小時 45 分鐘 (火車)",
+    base: "米蘭 (Milan)",
+    destination: "上午：策馬特 -> 米蘭中央車站。下午：**米蘭大教堂** (Duomo) 及**艾曼紐二世迴廊** (Galleria Vittorio Emanuele II)。",
+    travel: "策馬特 -> 米蘭：約 3 小時 45 分鐘 (火車/EC)",
     recommendation: "需在 Visp/Brig 轉乘，搭乘歐洲之星 (EuroCity, EC) 至米蘭。",
     duration: "3 小時 45 分鐘 - 4 小時",
-    base_map_link: "https://www.google.com/maps/search/?api=1&query=Milano+Centrale+train+station"
-  }
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Milano+Centrale+train+station",
+    country: "Italy"
+  },
+  {
+    day: "1/5 (Day 9)",
+    base: "米蘭 (Milan)",
+    destination: "米蘭市區文化之旅：**斯福爾扎城堡** (Sforza Castle) 與**布雷拉區** (Brera) 美術館。可選擇前往科莫湖 (Lake Como) 一日遊。",
+    travel: "市區交通 / 科莫湖：約 1 小時 (火車)",
+    recommendation: "購買米蘭交通日票 (ATM)。",
+    duration: "1 小時 - 1 小時 30 分鐘",
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Milano+Centrale+train+station",
+    country: "Italy"
+  },
+  {
+    day: "1/6 (Day 10)",
+    base: "威尼斯 (Venice)",
+    destination: "上午：米蘭 -> 威尼斯。下午：**聖馬可廣場** (Piazza San Marco)，**里亞托橋** (Rialto Bridge)。",
+    travel: "米蘭 -> 威尼斯：約 2 小時 30 分鐘 (高速列車)",
+    recommendation: "提前預訂義大利高速列車 (Frecciarossa)。",
+    duration: "2 小時 30 分鐘",
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Venezia+Santa+Lucia+train+station",
+    country: "Italy"
+  },
+  {
+    day: "1/7 (Day 11)",
+    base: "威尼斯 (Venice)",
+    destination: "威尼斯離島遊覽：**布拉諾島** (Burano) 彩色屋或**穆拉諾島** (Murano) 玻璃島。傍晚：總督宮夜景。",
+    travel: "水上巴士 (Vaporetto)",
+    recommendation: "購買威尼斯水上巴士日票。",
+    duration: "全天",
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Venezia+Santa+Lucia+train+station",
+    country: "Italy"
+  },
+  // Day 12-14: 佛羅倫斯 (義大利中部)
+  {
+    day: "1/8 (Day 12)",
+    base: "佛羅倫斯 (Florence)",
+    destination: "上午：威尼斯 -> 佛羅倫斯。下午：**老橋** (Ponte Vecchio)，**皮蒂宮** (Pitti Palace) 區散步。",
+    travel: "威尼斯 -> 佛羅倫斯：約 2 小時 15 分鐘 (高速列車)",
+    recommendation: "高速列車直達 Firenze S.M.N. 站。",
+    duration: "2 小時 15 分鐘",
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Firenze+Santa+Maria+Novella+train+station",
+    country: "Italy"
+  },
+  {
+    day: "1/9 (Day 13)",
+    base: "佛羅倫斯",
+    destination: "藝術精華：**聖母百花大教堂** (Duomo)、**喬托鐘樓** (Giotto's Bell Tower)、**烏菲茲美術館** (Uffizi Gallery)。",
+    travel: "市區步行",
+    recommendation: "烏菲茲美術館門票需提前數週預訂。",
+    duration: "全天",
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Firenze+Santa+Maria+Novella+train+station",
+    country: "Italy"
+  },
+  {
+    day: "1/10 (Day 14)",
+    base: "佛羅倫斯",
+    destination: "文藝復興：**學院美術館** (Accademia Gallery) 看大衛像。傍晚：**米開朗基羅廣場** (Piazzale Michelangelo) 觀看日落。",
+    travel: "市區步行 / 廣場可搭公車",
+    recommendation: "大衛像門票需預訂。",
+    duration: "全天",
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Firenze+Santa+Maria+Novella+train+station",
+    country: "Italy"
+  },
+  // Day 15-20: 羅馬 (義大利南部)
+  {
+    day: "1/11 (Day 15)",
+    base: "羅馬 (Rome)",
+    destination: "上午：佛羅倫斯 -> 羅馬。下午：**萬神殿** (Pantheon) 與**納沃納廣場** (Piazza Navona)。",
+    travel: "佛羅倫斯 -> 羅馬：約 1 小時 30 分鐘 (高速列車)",
+    recommendation: "高速列車直達 Roma Termini 站。",
+    duration: "1 小時 30 分鐘",
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Roma+Termini+train+station",
+    country: "Italy"
+  },
+  {
+    day: "1/12 (Day 16)",
+    base: "羅馬",
+    destination: "古羅馬遺址：**古羅馬競技場** (Colosseum)、**古羅馬廣場** (Roman Forum)、**帕拉蒂尼山** (Palatine Hill)。",
+    travel: "地鐵/步行",
+    recommendation: "競技場聯票必須提前預訂。",
+    duration: "全天",
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Roma+Termini+train+station",
+    country: "Italy"
+  },
+  {
+    day: "1/13 (Day 17)",
+    base: "羅馬",
+    destination: "梵蒂岡城：**梵蒂岡博物館**、**西斯汀教堂**、**聖彼得大教堂**。",
+    travel: "地鐵/步行",
+    recommendation: "注意梵蒂岡的服裝規定（不可露肩、短褲）。",
+    duration: "全天",
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Roma+Termini+train+station",
+    country: "Italy"
+  },
+  {
+    day: "1/14 (Day 18)",
+    base: "羅馬",
+    destination: "羅馬中心：**博蓋塞美術館** (Borghese Gallery)、**西班牙階梯**、**特萊維噴泉** (Trevi Fountain)。",
+    travel: "地鐵/步行",
+    recommendation: "博蓋塞美術館**必須**預訂 2 小時的場次。",
+    duration: "全天",
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Roma+Termini+train+station",
+    country: "Italy"
+  },
+  {
+    day: "1/15 (Day 19)",
+    base: "羅馬",
+    destination: "緩衝/休閒日：**特拉斯提弗列區** (Trastevere) 探索，或進行羅馬美食之旅/購物。",
+    travel: "步行/電車",
+    recommendation: "特拉斯提弗列區適合晚上用餐和感受當地氣氛。",
+    duration: "全天",
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Roma+Termini+train+station",
+    country: "Italy"
+  },
+  {
+    day: "1/16 (Day 20)",
+    base: "羅馬",
+    destination: "返程：從羅馬費米奇諾 (FCO) 機場搭機返家。",
+    travel: "羅馬 -> FCO 機場：約 30 分鐘 (Leonardo Express/計程車)",
+    recommendation: "預留充足時間辦理退稅和登機手續。",
+    duration: "半天",
+    base_map_link: "https://www.google.com/maps/search/?api=1&query=Roma+Termini+train+station",
+    country: "Italy"
+  },
 ];
 
 
@@ -330,13 +480,23 @@ const getModeIcon = (mode) => {
     case '火車 (齒輪)':
       return <CableCar className={iconClass} />;
     case '巴士':
+    case '公車':
       return <BusFront className={iconClass} />;
     case '遊船':
       return <Users className={iconClass} />;
+    case '水上巴士':
+      return <Ship className={iconClass} />; 
     case '步行':
       return <CarFront className={`${iconClass} scale-x-[-1]`} />;
     case '巴士/船':
       return <BusFront className={iconClass} />;
+    case '市區交通':
+      return <MapPinned className={iconClass} />;
+    case '地鐵/步行': // 羅馬常用
+    case '地鐵':
+      return <MapPinned className={iconClass} />;
+    case '羅馬 -> FCO':
+      return <Plane className={iconClass} />;
     default:
       return <Map className={iconClass} />;
   }
@@ -351,9 +511,9 @@ const AccommodationInfo = () => {
         <section className="mt-8 mb-10 bg-white p-6 rounded-2xl shadow-xl border-t-4 border-blue-500">
             <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center border-b pb-3">
                 <Hotel className="w-7 h-7 mr-3 text-red-500" />
-                住宿飯店資訊 (4 晚)
+                住宿飯店資訊 (共 {ACCOMMODATION_DATA.length} 個地點)
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-6">
                 {ACCOMMODATION_DATA.map((acc, index) => (
                     <div 
                         key={index} 
@@ -394,7 +554,7 @@ const AccommodationInfo = () => {
 
 
 // =========================================================================
-// 組件 4: 行程卡片列表視圖 (ItineraryCard) - 強調色彩
+// 組件 4: 行程卡片列表視圖 (ItineraryCard) - 保持不變
 // =========================================================================
 
 const ItineraryCard = ({ itinerary, onViewDetail }) => {
@@ -436,7 +596,7 @@ const ItineraryCard = ({ itinerary, onViewDetail }) => {
 };
 
 // =========================================================================
-// 組件 5: 行程詳細頁視圖 (ItineraryDetail) - 強調色彩
+// 組件 5: 行程詳細頁視圖 (ItineraryDetail) - 保持不變
 // =========================================================================
 
 const ItineraryDetail = ({ itinerary, onBack }) => {
@@ -520,18 +680,54 @@ const ItineraryDetail = ({ itinerary, onBack }) => {
 };
 
 // =========================================================================
-// 組件 6: 多日行程列表視圖 (MultiDayItinerary) - 強調色彩
+// 組件 6: 多日行程列表視圖 (MultiDayItinerary) - 增加國家標籤
 // =========================================================================
 
 const MultiDayItinerary = () => {
+
+  // 輔助函數：從 "DATE (Day X)" 格式的字串中提取 "Day X"
+  const extractDayLabel = (dayString) => {
+    const start = dayString.indexOf('(');
+    const end = dayString.indexOf(')');
+    if (start !== -1 && end !== -1 && end > start) {
+      return dayString.substring(start + 1, end); // 提取 "Day 1"
+    }
+    return '';
+  };
+
+  // 輔助函數：從 "DATE (Day X)" 格式的字串中提取 "DATE"
+  const extractDate = (dayString) => {
+    const space = dayString.indexOf(' ');
+    if (space !== -1) {
+      return dayString.substring(0, space); // 提取 "12/28"
+    }
+    return dayString;
+  };
+
+  // 輔助函數：根據國家返回圖標和顏色
+  const getCountryTag = (country) => {
+    if (country === "Italy") {
+      return (
+        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          <Landmark className="w-3 h-3 mr-1"/> 義大利
+        </span>
+      );
+    }
+    return (
+      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+        <Mountain className="w-3 h-3 mr-1"/> 瑞士
+      </span>
+    );
+  };
+    
   return (
     <>
       <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
         <CalendarDays className="w-7 h-7 mr-2 text-blue-700" />
-        八天經典行程規劃 (跨區)
+        {MULTI_DAY_ITINERARY.length} 天跨區域經典行程 (瑞義之旅)
       </h2>
       <p className="text-gray-600 mb-6 italic">
-        此為完整的跨區行程建議，涵蓋瑞士東部到西部的經典路線。
+        此行程結合了瑞士的壯麗山脈、義大利北部的浪漫水都以及中部的文藝復興與古羅馬遺跡。
       </p>
 
       {/* 行程表格 */}
@@ -540,7 +736,7 @@ const MultiDayItinerary = () => {
           <thead className="bg-blue-100 border-b-2 border-blue-300">
             <tr>
               <th className="px-4 py-3 text-left text-xs font-bold text-blue-700 uppercase tracking-wider w-1/12">日期</th>
-              <th className="px-4 py-3 text-left text-xs font-bold text-blue-700 uppercase tracking-wider w-2/12">主要據點</th>
+              <th className="px-4 py-3 text-left text-xs font-bold text-blue-700 uppercase tracking-wider w-2/12">主要據點/國家</th>
               <th className="px-4 py-3 text-left text-xs font-bold text-blue-700 uppercase tracking-wider w-4/12">行程與目的地</th>
               <th className="px-4 py-3 text-left text-xs font-bold text-blue-700 uppercase tracking-wider w-3/12">交通說明</th>
             </tr>
@@ -551,15 +747,21 @@ const MultiDayItinerary = () => {
                 key={index} 
                 className={`transition duration-150 hover:bg-blue-50`}
               >
-                <td className="px-4 py-4 whitespace-nowrap text-sm font-semibold text-red-600">
-                  {item.day.split(' ')[0]}
-                  <div className='text-xs font-normal text-gray-500'>{item.day.split(' ')[1]}</div>
+                {/* Day X 數字 */}
+                <td className="px-4 py-4 whitespace-nowrap text-sm font-semibold">
+                  <div className='text-base font-extrabold text-blue-700'>
+                      {extractDayLabel(item.day)}
+                  </div>
+                  <div className='text-xs font-normal text-red-500 mt-0.5'>
+                      {extractDate(item.day)}
+                  </div>
                 </td>
                 
-                {/* 保留 Google 地圖連結的車站欄位 */}
+                {/* 據點和國家標籤 */}
                 <td className="px-4 py-4 whitespace-normal text-sm text-gray-900 font-medium">
                   <div className="flex flex-col items-start space-y-1">
                     <span className='font-bold text-blue-700'>{item.base}</span>
+                    {getCountryTag(item.country)} {/* 顯示國家標籤 */}
                     {item.base_map_link && (
                         <a
                             href={item.base_map_link}
@@ -665,7 +867,6 @@ export default function App() {
   ) : (
     <>
       <h2 className="text-2xl font-bold text-gray-800 mb-6">
-        {/* 這裡的標題保持不變，因為上一個步驟已經修改過 */}
         {currentView === 'Sunny' ? '🏔️ 因特拉肯 6 個必去晴天方案 (高山活動)' : '☔ 因特拉肯 6 個實用雨天備案 (城鎮文化)'}
       </h2>
       
@@ -694,11 +895,11 @@ export default function App() {
       <header className={`py-8 shadow-2xl ${headerBg}`}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white flex items-center">
-            <Mountain className="w-8 h-8 mr-3 text-white" />
-            瑞士鐵路旅遊計畫
+            <Plane className="w-8 h-8 mr-3 text-white scale-x-[-1]" /> {/* 改用飛機圖標更符合跨國主題 */}
+            瑞義之旅行程規劃
           </h1>
           <p className="text-blue-100 mt-2 text-base">
-            規劃您的阿爾卑斯之旅：多日規劃、晴天與雨天備案一應俱全。
+            規劃您的阿爾卑斯山與義大利北部、中部之旅：涵蓋 20 天的完整行程。
           </p>
         </div>
       </header>
@@ -712,7 +913,7 @@ export default function App() {
             className={viewButtonClasses('MultiDay')}
           >
             <CalendarDays className="w-5 h-5" />
-            <span className='hidden sm:inline'>八天經典行程</span>
+            <span className='hidden sm:inline'>20 天瑞義經典行程</span>
             <span className='inline sm:hidden'>多日計畫</span>
           </button>
 
@@ -722,7 +923,6 @@ export default function App() {
             className={viewButtonClasses('Sunny')}
           >
             <Sun className="w-5 h-5" />
-            {/* <<< 已經加上「因特拉肯」 >>> */}
             <span>因特拉肯 晴天日遊</span>
             <span className='text-xs'>({ITINERARIES.filter(i => i.type === 'Sunny').length})</span>
           </button>
@@ -731,9 +931,8 @@ export default function App() {
           <button
             onClick={() => toggleView('Rainy')}
             className={viewButtonClasses('Rainy')}
-          >
+            >
             <CloudRain className="w-5 h-5" />
-            {/* <<< 已經加上「因特拉肯」 >>> */}
             <span>因特拉肯 雨天備案</span>
             <span className='text-xs'>({ITINERARIES.filter(i => i.type === 'Rainy').length})</span>
           </button>
