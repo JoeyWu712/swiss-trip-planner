@@ -544,7 +544,7 @@ export default function App() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center">
             <Mountain className="w-8 h-8 mr-3" />
-            瑞士行程指南 (Interlaken 中心)
+            瑞士行程
           </h1>
           <p className="text-white text-opacity-90 mt-1">
             當日行程可根據天氣切換，或查看跨區多日規劃。
