@@ -1,23 +1,22 @@
 // postcss.config.js
-export default {
+module.exports = {
   plugins: {
     tailwindcss: {},
     autoprefixer: {},
   },
 }
 ```
-**請確保您的 `postcss.config.js` 檔案內容完全如上所示。**
 
-#### 步驟二：提交並推送到 GitHub (將配置變更上傳)
+#### 步驟二：提交並推送到 GitHub
 
-由於我們只修改了設定檔，沒有安裝新套件，所以只需提交文件變更：
+這個修改應該能徹底解決 Vercel 在讀取配置檔時遇到的語法錯誤。請執行您剛才選中的 `git push` 指令，將這個修改後的配置檔上傳到 GitHub：
 
 ```powershell
 # 1. 將所有新的/修改過的檔案加入追蹤清單
 git add .
 
-# 2. 記錄這次的變更（說明是將 PostCSS 配置簡化，以適應新版 Tailwind）
-git commit -m "Fix: Simplified postcss.config.js for newer Tailwind versions"
+# 2. 記錄這次的變更（說明是將 PostCSS 配置格式改為 CommonJS 以修復 SyntaxError）
+git commit -m "Fix: Converted postcss.config.js to CommonJS format (module.exports)"
 
 # 3. 推送到 GitHub
 git push
