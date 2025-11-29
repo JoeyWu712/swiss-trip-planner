@@ -466,7 +466,7 @@ const MultiDayItinerary = () => {
       </div>
       
       <footer className="text-center text-gray-500 text-sm mt-10 py-4 border-t">
-        <p>資料來源: 用戶提供之八天行程規劃表。</p>
+        <p>資料來源: 行程規劃表</p>
       </footer>
     </>
   );
