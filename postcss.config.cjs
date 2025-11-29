@@ -1,10 +1,10 @@
 // postcss.config.cjs
-// 這是專門為了解決 Vercel/Vite 環境中 "type": "module" 衝突的最佳方案。
-// .cjs 擴展名強制 Node.js 將此檔案視為 CommonJS 模組。
+// 專為 CommonJS (CJS) 格式和 Vercel 環境設計的最終配置。
 
 module.exports = {
+  // 必須明確地使用 require() 函數載入插件，以避免 "Invalid PostCSS Plugin" 錯誤。
   plugins: [
-    'tailwindcss', 
-    'autoprefixer',
+    require('tailwindcss'),
+    require('autoprefixer'),
   ]
 }
