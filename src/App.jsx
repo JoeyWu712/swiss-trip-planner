@@ -665,7 +665,8 @@ export default function App() {
   ) : (
     <>
       <h2 className="text-2xl font-bold text-gray-800 mb-6">
-        {currentView === 'Sunny' ? '🏔️ 6 個必去晴天方案 (高山活動)' : '☔ 6 個實用雨天備案 (城鎮文化)'}
+        {/* 這裡的標題保持不變，因為上一個步驟已經修改過 */}
+        {currentView === 'Sunny' ? '🏔️ 因特拉肯 6 個必去晴天方案 (高山活動)' : '☔ 因特拉肯 6 個實用雨天備案 (城鎮文化)'}
       </h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -721,7 +722,8 @@ export default function App() {
             className={viewButtonClasses('Sunny')}
           >
             <Sun className="w-5 h-5" />
-            <span>晴天日遊</span>
+            {/* <<< 已經加上「因特拉肯」 >>> */}
+            <span>因特拉肯 晴天日遊</span>
             <span className='text-xs'>({ITINERARIES.filter(i => i.type === 'Sunny').length})</span>
           </button>
           
@@ -731,7 +733,8 @@ export default function App() {
             className={viewButtonClasses('Rainy')}
           >
             <CloudRain className="w-5 h-5" />
-            <span>雨天備案</span>
+            {/* <<< 已經加上「因特拉肯」 >>> */}
+            <span>因特拉肯 雨天備案</span>
             <span className='text-xs'>({ITINERARIES.filter(i => i.type === 'Rainy').length})</span>
           </button>
         </div>
