@@ -1,31 +1,31 @@
 import React, { useState } from 'react';
 // 導入 Lucide Icons 用於交通模式和 UI 裝飾
-import { Sun, CloudRain, TrainFront, CableCar, BusFront, Map, ArrowRight, Home, CarFront, Users, Building2, CalendarDays, Mountain, Clock, Plane, Hotel, MapPin, ExternalLink } from 'lucide-react';
+import { Sun, CloudRain, TrainFront, CableCar, BusFront, Map, ArrowRight, Home, CarFront, Users, Building2, CalendarDays, Mountain, Clock, Plane, Hotel, MapPin, ExternalLink, RefreshCw } from 'lucide-react';
 
 // =========================================================================
 // 新增數據 1: 飯店住宿資訊
 // =========================================================================
 const ACCOMMODATION_DATA = [
   {
-    base: "琉森",
+    base: "琉森 (Lucerne)",
     dates: "12/28 - 12/29",
     hotelName: "Hotel Continental Park",
     address: "Murbacherstrasse 4, 6003 Luzern, Switzerland",
   },
   {
-    base: "因特拉肯",
+    base: "因特拉肯 (Interlaken)",
     dates: "12/29 - 1/2",
     hotelName: "Victoria Jungfrau Grand Hotel & Spa",
     address: "Höheweg 41, 3800 Interlaken, Switzerland",
   },
   {
-    base: "策馬特",
+    base: "策馬特 (Zermatt)",
     dates: "1/2 - 1/4",
     hotelName: "Grand Hotel Zermatterhof",
     address: "Bahnhofstrasse 55, 3920 Zermatt, Switzerland",
   },
   {
-    base: "米蘭",
+    base: "米蘭 (Milan)",
     dates: "1/4",
     hotelName: "Hotel Milano Centrale",
     address: "Piazza Duca d'Aosta, 20124 Milano MI, Italy",
@@ -40,7 +40,8 @@ const ACCOMMODATION_DATA = [
 const generateGoogleMapsUrl = (address) => {
   if (!address) return '#';
   const encodedAddress = encodeURIComponent(address);
-  return `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+  // 使用 'dir' 模式，直接提供導航到該地址
+  return `https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}`;
 };
 
 
@@ -241,7 +242,7 @@ const ITINERARIES = [
 ];
 
 // =========================================================================
-// 數據 3: 8 天跨區域經典行程 (保留車站連結)
+// 數據 3: 8 天跨區域經典行程
 // =========================================================================
 const MULTI_DAY_ITINERARY = [
   {
@@ -319,67 +320,69 @@ const MULTI_DAY_ITINERARY = [
 ];
 
 
-// 獲取交通模式圖標的輔助函數 (保持不變)
+// 獲取交通模式圖標的輔助函數
 const getModeIcon = (mode) => {
   switch (mode.split('(')[0].trim()) {
     case '火車':
-      return <TrainFront className="w-5 h-5 text-indigo-600" />;
+      return <TrainFront className="w-5 h-5 text-sky-600" />;
     case '纜車':
     case '火車 (齒輪)':
-      return <CableCar className="w-5 h-5 text-indigo-600" />;
+      return <CableCar className="w-5 h-5 text-sky-600" />;
     case '巴士':
-      return <BusFront className="w-5 h-5 text-indigo-600" />;
+      return <BusFront className="w-5 h-5 text-sky-600" />;
     case '遊船':
-      return <Users className="w-5 h-5 text-indigo-600" />;
+      return <Users className="w-5 h-5 text-sky-600" />;
     case '步行':
-      return <CarFront className="w-5 h-5 text-indigo-600 scale-x-[-1]" />;
+      return <CarFront className="w-5 h-5 text-sky-600 scale-x-[-1]" />;
     case '巴士/船':
-      return <BusFront className="w-5 h-5 text-indigo-600" />;
+      return <BusFront className="w-5 h-5 text-sky-600" />;
     default:
-      return <Map className="w-5 h-5 text-indigo-600" />;
+      return <Map className="w-5 h-5 text-sky-600" />;
   }
 };
 
 // =========================================================================
-// 新組件: 飯店住宿資訊 (AccommodationInfo)
+// 組件: 飯店住宿資訊 (AccommodationInfo) - 介面優化
 // =========================================================================
 
 const AccommodationInfo = () => {
     return (
-        <section className="mt-8 mb-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center">
-                <Hotel className="w-7 h-7 mr-2 text-red-500" />
-                住宿飯店資訊
+        <section className="mt-8 mb-10 bg-white p-6 rounded-2xl shadow-xl">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center border-b pb-3">
+                <Hotel className="w-7 h-7 mr-3 text-red-500" />
+                住宿飯店資訊 (4 晚)
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {ACCOMMODATION_DATA.map((acc, index) => (
                     <div 
                         key={index} 
-                        className="bg-white p-4 rounded-xl shadow-lg border-l-4 border-red-400 transition hover:shadow-xl"
+                        className="flex flex-col bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-md transition hover:shadow-lg hover:border-red-300"
                     >
-                        <div className="flex justify-between items-center mb-1">
-                            <span className="text-xs font-bold text-red-600 uppercase tracking-wider">{acc.base}</span>
-                            <span className="text-xs text-gray-500">{acc.dates}</span>
+                        <div className="text-sm font-semibold text-gray-600 mb-1 flex items-center justify-between">
+                            <span className="flex items-center text-red-600">
+                                <MapPin className="w-4 h-4 mr-1"/>
+                                {acc.base}
+                            </span>
+                            <span className="text-xs font-mono text-gray-500">{acc.dates}</span>
                         </div>
                         
-                        <h3 className="text-lg font-bold text-gray-900 mb-1 line-clamp-1">
+                        <h3 className="text-lg font-extrabold text-gray-900 mb-2 line-clamp-2">
                             {acc.hotelName}
                         </h3>
                         
-                        <div className="flex items-start text-sm text-gray-600 mb-3">
-                            <MapPin className="w-4 h-4 mr-1 flex-shrink-0 mt-0.5" />
-                            <p className='line-clamp-2'>{acc.address}</p>
-                        </div>
+                        <p className="text-sm text-gray-600 mb-3 line-clamp-3 min-h-[40px] leading-tight">
+                            {acc.address}
+                        </p>
 
-                        {/* Google Map Link Button */}
+                        {/* Google Map Link Button - 簡潔設計 */}
                         <a
                             href={generateGoogleMapsUrl(acc.address)}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center text-xs font-medium text-blue-600 hover:text-blue-800 transition duration-150 bg-blue-100 rounded-full px-3 py-1 shadow-sm hover:shadow-md mt-2"
+                            className="inline-flex items-center justify-center mt-auto w-full px-3 py-2 text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition duration-150 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                         >
-                            <ExternalLink className="w-3 h-3 mr-1" />
-                            <span>Google 地圖</span>
+                            <ExternalLink className="w-4 h-4 mr-2" />
+                            <span>導航至此 (Google Map)</span>
                         </a>
                     </div>
                 ))}
@@ -390,7 +393,7 @@ const AccommodationInfo = () => {
 
 
 // =========================================================================
-// 組件 4: 行程卡片列表視圖 (ItineraryCard) - 保持不變
+// 組件 4: 行程卡片列表視圖 (ItineraryCard) - 介面優化
 // =========================================================================
 
 const ItineraryCard = ({ itinerary, onViewDetail }) => {
@@ -400,26 +403,29 @@ const ItineraryCard = ({ itinerary, onViewDetail }) => {
     <div
       onClick={() => onViewDetail(itinerary)}
       className={`
-        bg-white rounded-xl shadow-lg p-4 cursor-pointer transition-all duration-300
-        hover:shadow-xl hover:ring-2 
-        ${isSunny ? 'hover:ring-amber-500' : 'hover:ring-blue-400'}
+        bg-white rounded-xl shadow-lg p-5 cursor-pointer transition-all duration-300
+        hover:shadow-2xl hover:translate-y-[-2px] border-l-4 
+        ${isSunny ? 'border-amber-500 hover:border-amber-600' : 'border-sky-500 hover:border-sky-600'}
         flex flex-col space-y-2
       `}
     >
-      <div className="flex items-center justify-between border-b pb-2 mb-2">
-        <span className={`text-sm font-semibold px-2 py-1 rounded-full ${isSunny ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}`}>
+      <div className="flex items-center justify-between border-b border-gray-100 pb-2 mb-2">
+        <span className={`text-xs font-semibold px-2 py-1 rounded-full ${isSunny ? 'bg-amber-100 text-amber-700' : 'bg-sky-100 text-sky-700'}`}>
           方案 {itinerary.id}
         </span>
-        <span className="text-gray-500 text-sm">{itinerary.totalTime}</span>
+        <div className="flex items-center text-gray-500 text-sm">
+            <Clock className='w-4 h-4 mr-1'/>
+            {itinerary.totalTime}
+        </div>
       </div>
 
-      <h3 className="text-xl font-bold text-gray-800 line-clamp-2">
+      <h3 className="text-xl font-bold text-gray-900 line-clamp-2">
         {itinerary.title}
       </h3>
       <p className="text-sm text-gray-500 min-h-[40px]">{itinerary.brief}</p>
 
-      <div className="flex items-center space-x-2 text-indigo-600 font-medium pt-2">
-        <span>查看詳情</span>
+      <div className="flex items-center space-x-2 text-blue-600 font-medium pt-2 border-t border-gray-50">
+        <span>查看詳細交通路線</span>
         <ArrowRight className="w-4 h-4" />
       </div>
     </div>
@@ -427,60 +433,59 @@ const ItineraryCard = ({ itinerary, onViewDetail }) => {
 };
 
 // =========================================================================
-// 組件 5: 行程詳細頁視圖 (ItineraryDetail) - 保持不變
+// 組件 5: 行程詳細頁視圖 (ItineraryDetail) - 介面優化
 // =========================================================================
 
 const ItineraryDetail = ({ itinerary, onBack }) => {
   const isSunny = itinerary.type === 'Sunny';
+  const primaryColor = isSunny ? 'text-amber-600' : 'text-sky-600';
+  const primaryBg = isSunny ? 'bg-amber-50' : 'bg-sky-50';
+  const primaryBorder = isSunny ? 'border-amber-500' : 'border-sky-500';
 
   return (
     <div className="p-4 sm:p-6 bg-gray-50 min-h-screen">
       <button
         onClick={onBack}
-        className="flex items-center text-indigo-600 hover:text-indigo-800 font-medium mb-6 transition duration-150"
+        className="flex items-center text-gray-600 hover:text-gray-900 font-medium mb-6 py-2 px-3 rounded-lg bg-white shadow-md transition duration-150 border"
       >
         <ArrowRight className="w-5 h-5 mr-2 scale-x-[-1]" />
         返回行程列表
       </button>
 
-      {/* ... [ItineraryDetail 組件內容保持不變] ... */}
-      <div className={`rounded-xl shadow-2xl p-6 bg-white border-t-8 ${isSunny ? 'border-amber-500' : 'border-blue-400'}`}>
+      <div className={`rounded-xl shadow-2xl p-6 bg-white border-t-8 ${primaryBorder}`}>
         <h1 className="text-3xl font-extrabold text-gray-900 mb-2">{itinerary.title}</h1>
-        <p className={`text-lg font-semibold mb-4 ${isSunny ? 'text-amber-600' : 'text-blue-500'}`}>
+        <p className={`text-lg font-semibold mb-4 ${primaryColor}`}>
           {isSunny ? <Sun className="inline w-6 h-6 mr-1" /> : <CloudRain className="inline w-6 h-6 mr-1" />}
-          {itinerary.type === 'Sunny' ? '晴天首選方案' : '雨天備用方案'} - {itinerary.totalTime}
+          {itinerary.type === 'Sunny' ? '晴天首選方案' : '雨天備用方案'} - <span className='font-normal'>{itinerary.totalTime}</span>
         </p>
         <p className="text-gray-600 italic mb-6 border-b pb-4">{itinerary.brief}</p>
 
         {/* 交通分段時間軸 */}
-        <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center">
-            <TrainFront className="w-6 h-6 mr-2 text-red-500" />
+        <h2 className="text-2xl font-bold text-gray-800 mb-5 flex items-center">
+            <TrainFront className="w-6 h-6 mr-3 text-sky-600" />
             交通分段 (Interlaken Ost 起)
         </h2>
-        <div className="space-y-4 relative pl-4">
+        <div className="space-y-6 relative border-l-4 border-gray-200 ml-4">
           {itinerary.segments.map((segment, index) => (
-            <div key={index} className="flex items-start">
+            <div key={index} className="flex items-start -ml-2.5">
               {/* 圖標和線條 */}
               <div className="flex flex-col items-center">
-                <div className="p-2 rounded-full bg-indigo-100 ring-4 ring-white shadow-md z-10">
+                <div className="p-1.5 rounded-full bg-white ring-4 ring-sky-600 shadow-xl z-10">
                   {getModeIcon(segment.mode)}
                 </div>
-                {index < itinerary.segments.length - 1 && (
-                  <div className="w-0.5 h-12 bg-gray-300 -mt-0.5 -mb-0.5" />
-                )}
               </div>
               
               {/* 內容 */}
-              <div className="ml-4 pt-0.5 pb-2 w-full">
-                <p className="text-sm text-gray-500">
-                    從 <span className="font-semibold text-gray-700">{segment.from}</span>
+              <div className="ml-5 pt-0.5 pb-2 w-full">
+                <p className="text-xs text-gray-500 uppercase font-semibold">
+                    {segment.mode} ({segment.time})
                 </p>
-                <p className="text-lg font-bold text-gray-800">
-                    {segment.mode} <span className="text-indigo-600 text-base font-normal">({segment.time})</span>
-                </p>
-                <p className={`text-sm ${segment.transfer ? 'text-red-500 font-medium' : 'text-green-600 font-medium'}`}>
-                    抵達 <span className="font-semibold text-gray-700">{segment.to}</span>
-                    {segment.transfer && ' (需中轉/換乘)'}
+                <h3 className="text-lg font-bold text-gray-800">
+                    {segment.from} <ArrowRight className='inline w-4 h-4 mx-1 text-gray-400'/> {segment.to}
+                </h3>
+                <p className={`text-sm font-medium mt-1 ${segment.transfer ? 'text-red-500' : 'text-green-600'}`}>
+                    {segment.transfer ? <RefreshCw className='inline w-3 h-3 mr-1'/> : <Plane className='inline w-3 h-3 mr-1 scale-x-[-1]'/>}
+                    {segment.transfer ? '需中轉/換乘' : '直達/終點'}
                 </p>
               </div>
             </div>
@@ -488,9 +493,9 @@ const ItineraryDetail = ({ itinerary, onBack }) => {
         </div>
 
         {/* 地圖連結區 */}
-        <h2 className="text-2xl font-bold text-gray-800 mt-8 mb-4 border-t pt-4 flex items-center">
-            <Map className="w-6 h-6 mr-2 text-green-500" />
-            重要地圖連結
+        <h2 className="text-2xl font-bold text-gray-800 mt-10 mb-4 border-t pt-6 flex items-center">
+            <Map className="w-6 h-6 mr-3 text-gray-700" />
+            重要地標 Google 地圖連結
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {itinerary.mapLinks.map((link, index) => (
@@ -499,10 +504,10 @@ const ItineraryDetail = ({ itinerary, onBack }) => {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-green-500 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-green-600 transition duration-150 text-center flex items-center justify-center space-x-2"
+              className="bg-gray-700 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-gray-800 transition duration-150 text-center flex items-center justify-center space-x-2"
             >
               <Building2 className="w-5 h-5" />
-              <span>{link.name} (Google Maps)</span>
+              <span>{link.name} 地圖</span>
             </a>
           ))}
         </div>
@@ -512,51 +517,52 @@ const ItineraryDetail = ({ itinerary, onBack }) => {
 };
 
 // =========================================================================
-// 組件 6: 多日行程列表視圖 (MultiDayItinerary) - 保留車站連結
+// 組件 6: 多日行程列表視圖 (MultiDayItinerary) - 介面優化
 // =========================================================================
 
 const MultiDayItinerary = () => {
   return (
     <>
       <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-        <CalendarDays className="w-7 h-7 mr-2 text-purple-600" />
-        八天經典行程規劃 (琉森、因特拉肯、策馬特)
+        <CalendarDays className="w-7 h-7 mr-2 text-sky-600" />
+        八天經典行程規劃 (跨區)
       </h2>
       <p className="text-gray-600 mb-6 italic">
         此為完整的跨區行程建議，涵蓋瑞士東部到西部的經典路線。
       </p>
 
       {/* 行程表格 */}
-      <div className="overflow-x-auto rounded-xl shadow-xl">
+      <div className="overflow-x-auto rounded-xl shadow-xl border border-gray-200">
         <table className="min-w-full divide-y divide-gray-200 bg-white">
-          <thead className="bg-purple-100">
+          <thead className="bg-gray-50 border-b-2 border-sky-300">
             <tr>
-              <th className="px-3 py-3 text-left text-xs font-bold text-purple-700 uppercase tracking-wider w-1/12">日期</th>
-              <th className="px-3 py-3 text-left text-xs font-bold text-purple-700 uppercase tracking-wider w-2/12">主要據點</th>
-              <th className="px-3 py-3 text-left text-xs font-bold text-purple-700 uppercase tracking-wider w-4/12">行程與目的地</th>
-              <th className="px-3 py-3 text-left text-xs font-bold text-purple-700 uppercase tracking-wider w-3/12">交通說明</th>
+              <th className="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider w-1/12">日期</th>
+              <th className="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider w-2/12">主要據點</th>
+              <th className="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider w-4/12">行程與目的地</th>
+              <th className="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider w-3/12">交通說明</th>
             </tr>
           </thead>
-          <tbody className="divide-gray-200">
+          <tbody className="divide-y divide-gray-100">
             {MULTI_DAY_ITINERARY.map((item, index) => (
               <tr 
                 key={index} 
-                className={`${index % 2 === 0 ? 'bg-white' : 'bg-blue-50'} border-b-2 border-purple-200 hover:bg-purple-50 transition duration-150`}
+                className={`transition duration-150 hover:bg-sky-50`}
               >
-                <td className="px-3 py-4 whitespace-nowrap text-sm font-semibold text-purple-600">
-                  {item.day}
+                <td className="px-4 py-4 whitespace-nowrap text-sm font-semibold text-sky-600">
+                  {item.day.split(' ')[0]}
+                  <div className='text-xs font-normal text-gray-500'>{item.day.split(' ')[1]}</div>
                 </td>
                 
                 {/* 保留 Google 地圖連結的車站欄位 */}
-                <td className="px-3 py-4 whitespace-normal text-sm text-gray-900 font-medium">
+                <td className="px-4 py-4 whitespace-normal text-sm text-gray-900 font-medium">
                   <div className="flex flex-col items-start space-y-1">
-                    <span>{item.base}</span>
+                    <span className='font-bold'>{item.base}</span>
                     {item.base_map_link && (
                         <a
                             href={item.base_map_link}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center text-xs font-medium text-indigo-600 hover:text-indigo-800 transition duration-150 bg-indigo-100 rounded-full px-2 py-1 shadow-sm hover:shadow-md"
+                            className="inline-flex items-center text-xs font-medium text-blue-600 hover:text-blue-800 transition duration-150 bg-blue-100 rounded-full px-2 py-1 shadow-sm hover:shadow-md"
                         >
                             <Map className="w-3 h-3 mr-1" />
                             <span>車站地圖</span>
@@ -565,13 +571,13 @@ const MultiDayItinerary = () => {
                   </div>
                 </td>
 
-                <td className="px-3 py-4 whitespace-normal text-sm text-gray-600">
+                <td className="px-4 py-4 whitespace-normal text-sm text-gray-600">
                   <p className="font-semibold text-gray-800">{item.destination}</p>
-                  <div className="flex items-center text-xs text-indigo-500 mt-1">
+                  <div className="flex items-center text-xs text-red-500 mt-1">
                     <Clock className="w-3 h-3 mr-1" /> 總時程: {item.duration}
                   </div>
                 </td>
-                <td className="px-3 py-4 whitespace-normal text-sm text-gray-600">
+                <td className="px-4 py-4 whitespace-normal text-sm text-gray-600">
                     <p className="text-xs text-gray-500 italic mb-1">
                       {item.recommendation}
                     </p>
@@ -623,7 +629,24 @@ export default function App() {
   
   // 邏輯: 渲染主介面 (包含 Header 和切換按鈕)
   const isMultiDay = currentView === 'MultiDay';
-  const headerBg = isMultiDay ? 'bg-purple-600' : (currentView === 'Sunny' ? 'bg-amber-500' : 'bg-blue-600');
+  const headerBg = 'bg-sky-700'; // 統一使用一個深藍色調作為主色
+
+  const viewButtonClasses = (view) => {
+    const isActive = currentView === view;
+    const base = 'flex-1 p-3 text-center text-sm sm:text-base font-semibold rounded-lg transition-all duration-200 flex items-center justify-center space-x-2';
+    
+    if (isActive) {
+      let activeColor = '';
+      if (view === 'MultiDay') activeColor = 'bg-sky-600';
+      else if (view === 'Sunny') activeColor = 'bg-amber-500';
+      else if (view === 'Rainy') activeColor = 'bg-blue-600';
+
+      return `${base} ${activeColor} text-white shadow-xl transform scale-[1.02]`;
+    } else {
+      return `${base} text-gray-600 hover:bg-gray-100`;
+    }
+  };
+
   
   // 主要內容區域
   const mainContent = isMultiDay ? (
@@ -636,10 +659,10 @@ export default function App() {
   ) : (
     <>
       <h2 className="text-2xl font-bold text-gray-800 mb-6">
-        {currentView === 'Sunny' ? '🏔️ 6 個必去晴天方案' : '☔ 6 個實用雨天備案'}
+        {currentView === 'Sunny' ? '🏔️ 6 個必去晴天方案 (高山活動)' : '☔ 6 個實用雨天備案 (城鎮文化)'}
       </h2>
       
-      <div className="grid grid-cols-1 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredItineraries.map(itinerary => (
           <ItineraryCard 
             key={itinerary.id} 
@@ -649,7 +672,7 @@ export default function App() {
         ))}
       </div>
       
-      <footer className="text-center text-gray-500 text-sm mt-10 py-4 border-t">
+      <footer className="text-center text-gray-500 text-sm mt-10 py-4 border-t border-gray-200">
           <p>當日行程資料來源: 瑞士交通網絡與 Google Maps 預估時間。</p>
       </footer>
     </>
@@ -660,30 +683,28 @@ export default function App() {
   return (
     <div className="bg-gray-100 min-h-screen font-sans">
       
-      {/* 頂部標頭與模式切換 */}
-      <header className={`py-6 shadow-md ${headerBg}`}>
+      {/* 頂部標頭 - 使用簡潔的深藍色 */}
+      <header className={`py-8 shadow-2xl ${headerBg}`}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center">
-            <Mountain className="w-8 h-8 mr-3" />
-            瑞士行程規劃
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-white flex items-center">
+            <Mountain className="w-8 h-8 mr-3 text-white" />
+            瑞士鐵路旅遊計畫
           </h1>
-          <p className="text-white text-opacity-90 mt-1">
-            當日行程可根據天氣切換，或查看跨區多日規劃。
+          <p className="text-sky-100 mt-2 text-base">
+            規劃您的阿爾卑斯之旅：多日規劃、晴天與雨天備案一應俱全。
           </p>
         </div>
       </header>
       
-      {/* 模式切換按鈕 (三種視圖) */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-4 z-10 relative">
-        <div className="flex rounded-xl shadow-xl overflow-hidden bg-white p-1">
-          {/* 多日行程 (第一個按鈕) */}
+      {/* 模式切換按鈕 - 現代膠囊設計 */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 z-10 relative">
+        <div className="flex rounded-xl shadow-2xl overflow-hidden bg-white p-2 space-x-2">
+          {/* 多日行程 */}
           <button
             onClick={() => toggleView('MultiDay')}
-            className={`flex-1 p-3 text-center text-sm sm:text-lg font-bold rounded-lg transition-all duration-300 flex items-center justify-center space-x-1 ${
-              currentView === 'MultiDay' ? 'bg-purple-600 text-white shadow-lg' : 'text-gray-600 hover:bg-gray-50'
-            }`}
+            className={viewButtonClasses('MultiDay')}
           >
-            <CalendarDays className="w-5 h-5 sm:w-6 sm:h-6" />
+            <CalendarDays className="w-5 h-5" />
             <span className='hidden sm:inline'>八天經典行程</span>
             <span className='inline sm:hidden'>多日計畫</span>
           </button>
@@ -691,29 +712,27 @@ export default function App() {
           {/* 晴天行程 */}
           <button
             onClick={() => toggleView('Sunny')}
-            className={`flex-1 p-3 text-center text-sm sm:text-lg font-bold rounded-lg transition-all duration-300 flex items-center justify-center space-x-1 ${
-              currentView === 'Sunny' ? 'bg-amber-500 text-white shadow-lg' : 'text-gray-600 hover:bg-gray-50'
-            }`}
+            className={viewButtonClasses('Sunny')}
           >
-            <Sun className="w-5 h-5 sm:w-6 sm:h-6" />
-            <span>晴天日遊 ({ITINERARIES.filter(i => i.type === 'Sunny').length})</span>
+            <Sun className="w-5 h-5" />
+            <span>晴天日遊</span>
+            <span className='text-xs'>({ITINERARIES.filter(i => i.type === 'Sunny').length})</span>
           </button>
           
           {/* 雨天備案 */}
           <button
             onClick={() => toggleView('Rainy')}
-            className={`flex-1 p-3 text-center text-sm sm:text-lg font-bold rounded-lg transition-all duration-300 flex items-center justify-center space-x-1 ${
-              currentView === 'Rainy' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-600 hover:bg-gray-50'
-            }`}
+            className={viewButtonClasses('Rainy')}
           >
-            <CloudRain className="w-5 h-5 sm:w-6 sm:h-6" />
-            <span>雨天備案 ({ITINERARIES.filter(i => i.type === 'Rainy').length})</span>
+            <CloudRain className="w-5 h-5" />
+            <span>雨天備案</span>
+            <span className='text-xs'>({ITINERARIES.filter(i => i.type === 'Rainy').length})</span>
           </button>
         </div>
       </div>
 
       {/* 主要內容區域：根據 currentView 渲染不同內容 */}
-      <main className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 pt-8 bg-gray-100 min-h-screen">
+      <main className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 pt-8 bg-gray-100">
         {mainContent}
       </main>
     </div>
