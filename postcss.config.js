@@ -1,7 +1,8 @@
 // postcss.config.js
-/** @type {import('postcss-load-config').Config} */
-export default {
-  // 將插件定義在陣列中，這是與最新 PostCSS/Vite 兼容的寫法
+// 為了在 Vercel/Vite 環境中達到最高的兼容性，我們使用 CommonJS (CJS) 模組格式。
+
+module.exports = {
+  // 將插件定義在陣列中
   plugins: [
     'tailwindcss', 
     'autoprefixer',
