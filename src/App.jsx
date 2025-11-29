@@ -1,9 +1,51 @@
 import React, { useState } from 'react';
 // 導入 Lucide Icons 用於交通模式和 UI 裝飾
-import { Sun, CloudRain, TrainFront, CableCar, BusFront, Map, ArrowRight, Home, CarFront, Users, Building2, CalendarDays, Mountain, Clock, Plane } from 'lucide-react';
+import { Sun, CloudRain, TrainFront, CableCar, BusFront, Map, ArrowRight, Home, CarFront, Users, Building2, CalendarDays, Mountain, Clock, Plane, Hotel, MapPin, ExternalLink } from 'lucide-react';
 
 // =========================================================================
-// 數據 1: 因特拉肯當日行程 (12 個方案) - 保持不變
+// 新增數據 1: 飯店住宿資訊
+// =========================================================================
+const ACCOMMODATION_DATA = [
+  {
+    base: "琉森",
+    dates: "12/28 - 12/29",
+    hotelName: "Hotel Continental Park",
+    address: "Murbacherstrasse 4, 6003 Luzern, Switzerland",
+  },
+  {
+    base: "因特拉肯",
+    dates: "12/29 - 1/2",
+    hotelName: "Victoria Jungfrau Grand Hotel & Spa",
+    address: "Höheweg 41, 3800 Interlaken, Switzerland",
+  },
+  {
+    base: "策馬特",
+    dates: "1/2 - 1/4",
+    hotelName: "Grand Hotel Zermatterhof",
+    address: "Bahnhofstrasse 55, 3920 Zermatt, Switzerland",
+  },
+  {
+    base: "米蘭",
+    dates: "1/4",
+    hotelName: "Hotel Milano Centrale",
+    address: "Piazza Duca d'Aosta, 20124 Milano MI, Italy",
+  },
+];
+
+/**
+ * 輔助函數：根據地址產生 Google Maps 搜尋 URL
+ * @param {string} address 飯店地址
+ * @returns {string} Google Maps URL
+ */
+const generateGoogleMapsUrl = (address) => {
+  if (!address) return '#';
+  const encodedAddress = encodeURIComponent(address);
+  return `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+};
+
+
+// =========================================================================
+// 數據 2: 因特拉肯當日行程 (12 個方案) - 保持不變
 // =========================================================================
 const ITINERARIES = [
   // 晴天方案 (Sunny Itineraries S1-S6)
@@ -199,7 +241,7 @@ const ITINERARIES = [
 ];
 
 // =========================================================================
-// 數據 2: 8 天跨區域經典行程 (新增 base_map_link 欄位)
+// 數據 3: 8 天跨區域經典行程 (保留車站連結)
 // =========================================================================
 const MULTI_DAY_ITINERARY = [
   {
@@ -299,7 +341,56 @@ const getModeIcon = (mode) => {
 };
 
 // =========================================================================
-// 組件 1: 行程卡片列表視圖 (ItineraryCard) - 保持不變
+// 新組件: 飯店住宿資訊 (AccommodationInfo)
+// =========================================================================
+
+const AccommodationInfo = () => {
+    return (
+        <section className="mt-8 mb-8">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                <Hotel className="w-7 h-7 mr-2 text-red-500" />
+                住宿飯店資訊
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {ACCOMMODATION_DATA.map((acc, index) => (
+                    <div 
+                        key={index} 
+                        className="bg-white p-4 rounded-xl shadow-lg border-l-4 border-red-400 transition hover:shadow-xl"
+                    >
+                        <div className="flex justify-between items-center mb-1">
+                            <span className="text-xs font-bold text-red-600 uppercase tracking-wider">{acc.base}</span>
+                            <span className="text-xs text-gray-500">{acc.dates}</span>
+                        </div>
+                        
+                        <h3 className="text-lg font-bold text-gray-900 mb-1 line-clamp-1">
+                            {acc.hotelName}
+                        </h3>
+                        
+                        <div className="flex items-start text-sm text-gray-600 mb-3">
+                            <MapPin className="w-4 h-4 mr-1 flex-shrink-0 mt-0.5" />
+                            <p className='line-clamp-2'>{acc.address}</p>
+                        </div>
+
+                        {/* Google Map Link Button */}
+                        <a
+                            href={generateGoogleMapsUrl(acc.address)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center text-xs font-medium text-blue-600 hover:text-blue-800 transition duration-150 bg-blue-100 rounded-full px-3 py-1 shadow-sm hover:shadow-md mt-2"
+                        >
+                            <ExternalLink className="w-3 h-3 mr-1" />
+                            <span>Google 地圖</span>
+                        </a>
+                    </div>
+                ))}
+            </div>
+        </section>
+    );
+};
+
+
+// =========================================================================
+// 組件 4: 行程卡片列表視圖 (ItineraryCard) - 保持不變
 // =========================================================================
 
 const ItineraryCard = ({ itinerary, onViewDetail }) => {
@@ -336,7 +427,7 @@ const ItineraryCard = ({ itinerary, onViewDetail }) => {
 };
 
 // =========================================================================
-// 組件 2: 行程詳細頁視圖 (ItineraryDetail) - 保持不變
+// 組件 5: 行程詳細頁視圖 (ItineraryDetail) - 保持不變
 // =========================================================================
 
 const ItineraryDetail = ({ itinerary, onBack }) => {
@@ -421,7 +512,7 @@ const ItineraryDetail = ({ itinerary, onBack }) => {
 };
 
 // =========================================================================
-// 組件 3: 多日行程列表視圖 (MultiDayItinerary)
+// 組件 6: 多日行程列表視圖 (MultiDayItinerary) - 保留車站連結
 // =========================================================================
 
 const MultiDayItinerary = () => {
@@ -450,14 +541,13 @@ const MultiDayItinerary = () => {
             {MULTI_DAY_ITINERARY.map((item, index) => (
               <tr 
                 key={index} 
-                // 添加 border-b-2 實現實線分割
                 className={`${index % 2 === 0 ? 'bg-white' : 'bg-blue-50'} border-b-2 border-purple-200 hover:bg-purple-50 transition duration-150`}
               >
                 <td className="px-3 py-4 whitespace-nowrap text-sm font-semibold text-purple-600">
                   {item.day}
                 </td>
                 
-                {/* 增加 Google 地圖連結的欄位 */}
+                {/* 保留 Google 地圖連結的車站欄位 */}
                 <td className="px-3 py-4 whitespace-normal text-sm text-gray-900 font-medium">
                   <div className="flex flex-col items-start space-y-1">
                     <span>{item.base}</span>
@@ -497,7 +587,7 @@ const MultiDayItinerary = () => {
 };
 
 // =========================================================================
-// 核心組件: App - 保持不變
+// 核心組件: App
 // =========================================================================
 
 export default function App() {
@@ -534,8 +624,15 @@ export default function App() {
   // 邏輯: 渲染主介面 (包含 Header 和切換按鈕)
   const isMultiDay = currentView === 'MultiDay';
   const headerBg = isMultiDay ? 'bg-purple-600' : (currentView === 'Sunny' ? 'bg-amber-500' : 'bg-blue-600');
+  
+  // 主要內容區域
   const mainContent = isMultiDay ? (
-      <MultiDayItinerary />
+      <>
+        {/* 新增: 飯店住宿資訊 */}
+        <AccommodationInfo />
+        {/* 保留: 多日行程列表 */}
+        <MultiDayItinerary />
+      </>
   ) : (
     <>
       <h2 className="text-2xl font-bold text-gray-800 mb-6">
@@ -568,7 +665,7 @@ export default function App() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center">
             <Mountain className="w-8 h-8 mr-3" />
-            瑞士行程
+            瑞士行程規劃
           </h1>
           <p className="text-white text-opacity-90 mt-1">
             當日行程可根據天氣切換，或查看跨區多日規劃。
