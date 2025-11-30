@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 // 導入 Lucide Icons 用於交通模式和 UI 裝飾
-import { Sun, CloudRain, TrainFront, CableCar, BusFront, Map, ArrowRight, Home, CarFront, Users, Building2, CalendarDays, Mountain, Clock, Plane, Hotel, MapPin, ExternalLink, ScrollText, Landmark, ShoppingBag, Ship, MapPinned, Route, Ticket, LocateFixed } from 'lucide-react'; 
+import { Sun, CloudRain, TrainFront, CableCar, BusFront, Map, ArrowRight, Home, CarFront, Users, Building2, CalendarDays, Mountain, Clock, Plane, Hotel, MapPin, ExternalLink, ScrollText, Landmark, ShoppingBag, Ship, MapPinned, Route, Ticket, LocateFixed, ArrowLeft } from 'lucide-react'; 
 
 // =========================================================================
 // 數據 1: 飯店住宿資訊
@@ -61,7 +61,6 @@ const ACCOMMODATION_DATA = [
 
 /**
  * 輔助函數：根據地址或連結產生 Google Maps URL
- * 由於使用者提供了直接的 maps.app.goo.gl 連結，我們直接使用該連結。
  * @param {string} mapLink 飯店地圖連結
  * @returns {string} Google Maps URL
  */
@@ -71,7 +70,7 @@ const generateGoogleMapsUrl = (mapLink) => {
 
 
 // =========================================================================
-// 數據 2: 因特拉肯當日行程
+// 數據 2: 因特拉肯當日行程 (ITINERARIES - 保持不變)
 // =========================================================================
 const ITINERARIES = [
   // 晴天方案 (Sunny Itineraries S1-S6)
@@ -268,10 +267,10 @@ const ITINERARIES = [
 
 
 // =========================================================================
-// 數據 3: 20 天跨區域經典行程 (瑞義之旅)
+// 數據 3: 20 天跨區域經典行程 (更新 Day 3-5)
 // =========================================================================
 const MULTI_DAY_ITINERARY = [
-  // Day 1: 瑞士 琉森
+  // Day 1: 瑞士 琉森 (保持不變)
   {
     day: "12/28 (Day 1)",
     base: "琉森 (Lucerne)",
@@ -282,8 +281,42 @@ const MULTI_DAY_ITINERARY = [
     country: "Switzerland",
     station_from: "蘇黎世機場火車站(Zürich Flughafen)",
     station_to: "琉森火車站(Luzern Bahnhof)",
+    daily_steps: [
+      {
+        time: "12:00 - 13:00",
+        title: "蘇黎世機場 (ZRH) → 琉森 (Lucerne)",
+        details: "搭乘 IC8 (InterCity 8) 直達列車前往琉森。這是旅途的第一段，享受窗外景緻。",
+        transport: "IC8 火車",
+        notes: "Swiss Travel Pass (STP) 完全涵蓋，IC8 車班每小時一班。",
+        icon: "TrainFront",
+      },
+      {
+        time: "13:30",
+        title: "飯店辦理入住 (Check-in)",
+        details: "抵達霍夫加藤盧澤恩酒店 (Hotel Hofgarten Luzern)，放下行李稍作休息。",
+        transport: "步行",
+        notes: "飯店距離車站可步行或搭乘巴士。確保已準備好護照和訂房憑證。",
+        icon: "Hotel",
+      },
+      {
+        time: "15:00 - 17:00",
+        title: "琉森市區漫步與經典景點",
+        details: "參觀歐洲最古老的木橋『卡貝爾橋 (Kapellbrücke)』，並前往悼念瑞士傭兵的『獅子紀念碑 (Löwendenkmal)』。",
+        transport: "步行",
+        notes: "建議在卡貝爾橋附近多拍照。獅子紀念碑較為肅穆，請保持安靜。",
+        icon: "MapPinned",
+      },
+      {
+        time: "18:30",
+        title: "晚餐時間",
+        details: "在琉森市區尋找餐廳享用晚餐。",
+        transport: "步行",
+        notes: "可嘗試湖畔餐廳或靠近飯店的選項。",
+        icon: "ShoppingBag",
+      },
+    ]
   },
-  // Day 2: 瑞士 因特拉肯
+  // Day 2: 瑞士 因特拉肯 (保持不變)
   {
     day: "12/29 (Day 2)",
     base: "因特拉肯 (Interlaken)",
@@ -294,44 +327,52 @@ const MULTI_DAY_ITINERARY = [
     country: "Switzerland",
     station_from: "琉森火車站(Luzern Bahnhof)",
     station_to: "因特拉肯東站(Interlaken Ost)",
+    daily_steps: [] 
   },
-  // Day 3: 瑞士 因特拉肯
+  
+  // === Day 3: 更新內容為參考方案 ===
   {
     day: "12/30 (Day 3)",
     base: "因特拉肯",
     destination: "參考INTERLAKEN的晴天及雨天六個行程規劃",
-    travel: "單程約2小時15分鐘 (火車/纜車)",
-    recommendation: "根據天氣選擇 S1-S6 或 R1-R6 方案。",
+    travel: "單程約1小時 – 2小時30分鐘 (火車/纜車/船)",
+    recommendation: "請點選上方的『晴天日遊』或『雨天備案』按鈕查看詳細的 S1-S6 或 R1-R6 方案。",
     duration: "請參考當日行程",
     country: "Switzerland",
     station_from: "因特拉肯東站",
-    station_to: "因特拉肯東站",
+    station_to: "因特拉肯周邊",
+    daily_steps: []
   },
-  // Day 4: 瑞士 因特拉肯
+  
+  // === Day 4: 更新內容為參考方案 ===
   {
     day: "12/31 (Day 4)",
     base: "因特拉肯",
-    destination: "因特拉肯 → First/雪朗峰：約1小時至1小時40分鐘",
-    travel: "火車/纜車",
-    recommendation: "建議預訂 First 或雪朗峰的纜車。",
-    duration: "1 小時 – 1 小時 40 分鐘",
+    destination: "參考INTERLAKEN的晴天及雨天六個行程規劃",
+    travel: "單程約1小時 – 2小時30分鐘 (火車/纜車/船)",
+    recommendation: "跨年假日，請務必提早確認 SBB 班次及高山纜車的營運時間。",
+    duration: "請參考當日行程",
     country: "Switzerland",
     station_from: "因特拉肯東站",
-    station_to: "First/Schilthorn",
+    station_to: "因特拉肯周邊",
+    daily_steps: []
   },
-  // Day 5: 瑞士 因特拉肯
+
+  // === Day 5: 更新內容為參考方案 ===
   {
     day: "1/1 (Day 5)",
     base: "因特拉肯",
-    destination: "勞特布魯嫩：約30分鐘 (火車)",
-    travel: "火車",
-    recommendation: "新年假日，請務必確認 SBB 班次及纜車的營運時間。",
-    duration: "約 30 分鐘",
+    destination: "參考INTERLAKEN的晴天及雨天六個行程規劃",
+    travel: "單程約1小時 – 2小時30分鐘 (火車/纜車/船)",
+    recommendation: "新年假日，請務必確認 SBB 班次及高山設施的營運時間。",
+    duration: "請參考當日行程",
     country: "Switzerland",
     station_from: "因特拉肯東站",
-    station_to: "勞特布魯嫩(Lauterbrunnen)",
+    station_to: "因特拉肯周邊",
+    daily_steps: []
   },
-  // Day 6: 瑞士 策馬特
+  
+  // Day 6 - Day 20 (保持不變)
   {
     day: "1/2 (Day 6)",
     base: "策馬特 (Zermatt)",
@@ -342,8 +383,8 @@ const MULTI_DAY_ITINERARY = [
     country: "Switzerland",
     station_from: "因特拉肯東站(Interlaken Ost)",
     station_to: "策馬特火車站(Zermatt train station)",
+    daily_steps: []
   },
-  // Day 7: 瑞士 策馬特
   {
     day: "1/3 (Day 7)",
     base: "策馬特",
@@ -354,8 +395,8 @@ const MULTI_DAY_ITINERARY = [
     country: "Switzerland",
     station_from: "Täsch", // Täsch 是策馬特門戶，這裡可能是指從 Täsch 停車場接駁
     station_to: "策馬特冰川天堂(Matterhorn Glacier Paradise)",
+    daily_steps: []
   },
-  // Day 8: 義大利 米蘭
   {
     day: "1/4 (Day 8)",
     base: "米蘭 (Milan)",
@@ -366,8 +407,8 @@ const MULTI_DAY_ITINERARY = [
     country: "Italy",
     station_from: "策馬特火車站(Zermatt train station)",
     station_to: "米蘭中央車站(Milano Centrale)",
+    daily_steps: []
   },
-  // Day 9: 義大利 威尼斯
   {
     day: "1/5 (Day 9)",
     base: "威尼斯 (Venice)",
@@ -378,8 +419,8 @@ const MULTI_DAY_ITINERARY = [
     country: "Italy",
     station_from: "米蘭中央車站(Milano Centrale)",
     station_to: "威尼斯聖塔露西亞車站(Venezia Santa Lucia)",
+    daily_steps: []
   },
-  // Day 10: 義大利 威尼斯
   {
     day: "1/6 (Day 10)",
     base: "威尼斯",
@@ -390,8 +431,8 @@ const MULTI_DAY_ITINERARY = [
     country: "Italy",
     station_from: "威尼斯聖塔露西亞車站",
     station_to: "威尼斯島內",
+    daily_steps: []
   },
-  // Day 11: 義大利 威尼斯
   {
     day: "1/7 (Day 11)",
     base: "威尼斯",
@@ -402,8 +443,8 @@ const MULTI_DAY_ITINERARY = [
     country: "Italy",
     station_from: "威尼斯島內",
     station_to: "布拉諾島(Burano) / 穆拉諾島(Murano)",
+    daily_steps: []
   },
-  // Day 12: 義大利 佛羅倫斯
   {
     day: "1/8 (Day 12)",
     base: "佛羅倫斯 (Florence)",
@@ -414,8 +455,8 @@ const MULTI_DAY_ITINERARY = [
     country: "Italy",
     station_from: "威尼斯聖塔露西亞車站(Venezia Santa Lucia)",
     station_to: "佛羅倫斯新聖母大教堂車站(Firenze S.M.N.)",
+    daily_steps: []
   },
-  // Day 13: 義大利 佛羅倫斯
   {
     day: "1/9 (Day 13)",
     base: "佛羅倫斯",
@@ -426,8 +467,8 @@ const MULTI_DAY_ITINERARY = [
     country: "Italy",
     station_from: "市區內",
     station_to: "市區內",
+    daily_steps: []
   },
-  // Day 14: 義大利 佛羅倫斯
   {
     day: "1/10 (Day 14)",
     base: "佛羅倫斯",
@@ -438,8 +479,8 @@ const MULTI_DAY_ITINERARY = [
     country: "Italy",
     station_from: "市區內",
     station_to: "市區內",
+    daily_steps: []
   },
-  // Day 15: 義大利 佛羅倫斯
   {
     day: "1/11 (Day 15)",
     base: "佛羅倫斯",
@@ -450,8 +491,8 @@ const MULTI_DAY_ITINERARY = [
     country: "Italy",
     station_from: "市區內",
     station_to: "米開朗基羅廣場",
+    daily_steps: []
   },
-  // Day 16: 義大利 羅馬
   {
     day: "1/12 (Day 16)",
     base: "羅馬 (Rome)",
@@ -462,8 +503,8 @@ const MULTI_DAY_ITINERARY = [
     country: "Italy",
     station_from: "佛羅倫斯新聖母大教堂車站(Firenze S.M.N.)",
     station_to: "羅馬中央車站(Roma Termini)",
+    daily_steps: []
   },
-  // Day 17: 義大利 羅馬 (梵蒂岡)
   {
     day: "1/13 (Day 17)",
     base: "羅馬",
@@ -474,8 +515,8 @@ const MULTI_DAY_ITINERARY = [
     country: "Italy",
     station_from: "羅馬 Termini",
     station_to: "梵蒂岡(Ottaviano Metro)",
+    daily_steps: []
   },
-  // Day 18: 義大利 羅馬
   {
     day: "1/14 (Day 18)",
     base: "羅馬",
@@ -486,8 +527,8 @@ const MULTI_DAY_ITINERARY = [
     country: "Italy",
     station_from: "羅馬 Termini",
     station_to: "羅馬競技場(Colosseo Metro)",
+    daily_steps: []
   },
-  // Day 19: 義大利 羅馬
   {
     day: "1/15 (Day 19)",
     base: "羅馬",
@@ -498,8 +539,8 @@ const MULTI_DAY_ITINERARY = [
     country: "Italy",
     station_from: "市區內",
     station_to: "市區內",
+    daily_steps: []
   },
-  // Day 20: 義大利 啟程回國
   {
     day: "1/16 (Day 20)",
     base: "羅馬",
@@ -510,14 +551,14 @@ const MULTI_DAY_ITINERARY = [
     country: "Italy",
     station_from: "羅馬中央車站(Roma Termini)",
     station_to: "羅馬菲烏米奇諾機場(FCO)",
-  }, // <--- 這個逗號是上次可能遺失的，但這次我會確保它已移除（因為這是陣列最後一個元素，避免 IE 瀏覽器兼容性問題）
-]; // <--- 陣列閉合符號，確保這裡沒有多餘的東西
+    daily_steps: []
+  },
+];
 
 
-// 獲取交通模式圖標的輔助函數 
+// 獲取交通模式圖標的輔助函數 (用於多日行程總覽)
 const getModeIcon = (mode) => {
   const iconClass = "w-5 h-5 text-blue-700 dark:text-blue-300";
-  // 調整圖標以匹配新的交通描述
   if (mode.includes('火車')) return <TrainFront className={iconClass} />;
   if (mode.includes('高鐵') || mode.includes('快車') || mode.includes('Express')) return <TrainFront className={`${iconClass} text-red-500`} />;
   if (mode.includes('纜車')) return <CableCar className={iconClass} />;
@@ -528,6 +569,19 @@ const getModeIcon = (mode) => {
   if (mode.includes('ZRH') || mode.includes('FCO')) return <Plane className={iconClass} />;
   
   return <Route className={iconClass} />;
+};
+
+// 獲取詳細步驟圖標的輔助函數 (用於單日詳細頁面)
+const getStepIcon = (iconName) => {
+    const iconClass = "w-6 h-6 text-white";
+    switch (iconName) {
+        case 'TrainFront': return <TrainFront className={iconClass} />;
+        case 'Hotel': return <Hotel className={iconClass} />;
+        case 'MapPinned': return <MapPinned className={iconClass} />;
+        case 'ShoppingBag': return <ShoppingBag className={iconClass} />;
+        case 'Plane': return <Plane className={iconClass} />;
+        default: return <LocateFixed className={iconClass} />;
+    }
 };
 
 // =========================================================================
@@ -562,13 +616,12 @@ const AccommodationInfo = ({ data, generateGoogleMapsUrl }) => {
                 {item.base} 
             </p>
             <div className="mt-3 flex flex-col sm:flex-row sm:items-center justify-between border-t pt-3 border-gray-200 dark:border-gray-600">
-                {/* 顯示飯店名稱作為地址的視覺化替代，因為實際地址文字缺失 */}
                 <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center mb-2 sm:mb-0">
                     <MapPin className="w-4 h-4 mr-1 flex-shrink-0" />
                     {item.address} ({item.hotelName})
                 </p>
                 <a 
-                    href={generateGoogleMapsUrl(item.mapLink)} // 使用 mapLink
+                    href={generateGoogleMapsUrl(item.mapLink)} 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 text-sm font-medium transition duration-150"
@@ -670,13 +723,17 @@ const ItineraryCard = ({ itinerary, weatherIcon: Icon, color, isRainy }) => (
 // 組件: 多日行程卡片 (MultiDayCard)
 // =========================================================================
 
-const MultiDayCard = ({ day }) => {
+const MultiDayCard = ({ day, onSelectDay }) => {
     // 判斷國家，用於樣式區分
     const isSwiss = day.country === 'Switzerland';
     const bgColor = isSwiss ? 'bg-red-50 dark:bg-red-900/20' : 'bg-green-50 dark:bg-green-900/20';
     const borderColor = isSwiss ? 'border-red-400' : 'border-green-400';
     const titleColor = isSwiss ? 'text-red-700 dark:text-red-300' : 'text-green-700 dark:text-green-300';
     const dotColor = isSwiss ? 'bg-red-500' : 'bg-green-500';
+
+    // 判斷是否有詳細步驟
+    const hasDetails = day.daily_steps && day.daily_steps.length > 0;
+    const buttonClasses = hasDetails ? 'cursor-pointer hover:bg-opacity-80 transition-opacity' : 'cursor-default';
 
     // 處理預訂要求樣式
     const getRecommendationStyle = (text) => {
@@ -703,8 +760,11 @@ const MultiDayCard = ({ day }) => {
                 <div className="w-px h-full bg-gray-300 dark:bg-gray-600"></div>
             </div>
             
-            {/* 右側：內容卡片 */}
-            <div className={`flex-grow ${bgColor} border-l-4 ${borderColor} rounded-lg p-4 mb-6 shadow-md transition hover:shadow-lg`}>
+            {/* 右側：內容卡片 (可點擊區域) */}
+            <div 
+                className={`flex-grow ${bgColor} border-l-4 ${borderColor} rounded-lg p-4 mb-6 shadow-md transition hover:shadow-lg ${buttonClasses}`}
+                onClick={() => hasDetails && onSelectDay(day)} // 只有有詳細步驟時才觸發點擊
+            >
                 <div className="flex items-center justify-between mb-2">
                     {/* 日期與國家標籤 */}
                     <h3 className={`text-lg font-bold ${titleColor} flex items-center`}>
@@ -714,7 +774,12 @@ const MultiDayCard = ({ day }) => {
                             {day.country === 'Switzerland' ? '瑞士' : '義大利'}
                         </span>
                     </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{day.base}</p>
+                    <div className="flex items-center">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{day.base}</p>
+                        {hasDetails && (
+                            <ArrowRight className="w-4 h-4 ml-2 text-blue-500 dark:text-blue-400 flex-shrink-0" />
+                        )}
+                    </div>
                 </div>
                 
                 {/* 行程目的地與簡介 */}
@@ -728,29 +793,86 @@ const MultiDayCard = ({ day }) => {
                         <TrainFront className="w-4 h-4 mr-2 text-blue-600 flex-shrink-0" />
                         <span className="font-semibold mr-1">交通方式:</span> {day.travel}
                     </p>
-                    <div className="flex flex-col sm:flex-row sm:space-x-4">
-                        <p className="text-gray-700 dark:text-gray-300 flex items-center">
-                            <LocateFixed className="w-4 h-4 mr-2 text-teal-600 flex-shrink-0" />
-                            <span className="font-semibold mr-1">起點:</span> {day.station_from}
-                        </p>
-                        <p className="text-gray-700 dark:text-gray-300 flex items-center">
-                            <MapPin className="w-4 h-4 mr-2 text-teal-600 flex-shrink-0" />
-                            <span className="font-semibold mr-1">終點:</span> {day.station_to}
-                        </p>
-                    </div>
-                    <p className="text-gray-700 dark:text-gray-300 flex items-center mt-1">
-                        <Clock className="w-4 h-4 mr-2 text-red-500 flex-shrink-0" />
-                        <span className="font-semibold mr-1">行駛時間:</span> {day.duration}
-                    </p>
-                </div>
-                
-                {/* 預訂要求 */}
-                <div className="pt-3 border-t border-gray-200 dark:border-gray-700">
-                    <p className={`${recClass} flex items-start text-sm`}>
+                    <p className={`${recClass} flex items-start text-sm mt-3`}>
                         {recIcon}
                         <span className="font-semibold mr-1">預訂建議:</span> {day.recommendation}
                     </p>
                 </div>
+            </div>
+        </div>
+    );
+};
+
+// =========================================================================
+// 組件: 單日詳細行程檢視 (DayDetailView)
+// =========================================================================
+
+const DayDetailView = ({ day, onBack }) => {
+    const isSwiss = day.country === 'Switzerland';
+    const bgColor = isSwiss ? 'bg-red-50 dark:bg-red-900/20' : 'bg-green-50 dark:bg-green-900/20';
+    const borderColor = isSwiss ? 'border-red-500' : 'border-green-600';
+
+    return (
+        <div className="bg-white dark:bg-gray-800 shadow-xl rounded-xl p-6 sm:p-8 space-y-8">
+            {/* 頂部標題與返回按鈕 */}
+            <div className="flex items-center justify-between border-b pb-4 border-gray-200 dark:border-gray-700">
+                <div className="flex flex-col">
+                    <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
+                        <span className={`text-xl font-medium ${isSwiss ? 'text-red-600' : 'text-green-600'} mr-2`}>
+                            {day.day}
+                        </span>
+                        {day.base} 詳細計畫
+                    </h2>
+                    <p className="text-gray-500 dark:text-gray-400 mt-1">
+                        {day.destination}
+                    </p>
+                </div>
+                <button
+                    onClick={onBack}
+                    className="flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 font-medium transition duration-150 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                    <ArrowLeft className="w-5 h-5 mr-1" />
+                    返回總覽
+                </button>
+            </div>
+
+            {/* 詳細步驟時間軸 */}
+            <div className="relative pl-5 sm:pl-8">
+                {/* 時間軸線 */}
+                <div className={`absolute left-0 top-0 bottom-0 w-1 ${borderColor} opacity-70`}></div>
+                
+                {day.daily_steps.length > 0 ? day.daily_steps.map((step, index) => (
+                    <div key={index} className="flex mb-8 items-start relative">
+                        {/* 圓點與圖標 */}
+                        <div className={`absolute -left-[18px] sm:-left-[20px] top-0 p-1.5 rounded-full ${isSwiss ? 'bg-red-500' : 'bg-green-600'} shadow-lg ring-4 ring-white dark:ring-gray-800`}>
+                            {getStepIcon(step.icon)}
+                        </div>
+                        
+                        {/* 步驟內容 */}
+                        <div className={`flex-1 min-w-0 ml-4 sm:ml-0 p-4 rounded-lg shadow-sm border ${borderColor} border-opacity-30 ${bgColor}`}>
+                            <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1 flex items-center">
+                                <Clock className="w-4 h-4 mr-1" />
+                                {step.time}
+                            </p>
+                            <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{step.title}</h4>
+                            <p className="text-gray-700 dark:text-gray-300 text-base mb-2">{step.details}</p>
+                            
+                            <div className="mt-3 pt-3 border-t border-gray-300 dark:border-gray-600 space-y-1">
+                                <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">
+                                    <span className="font-bold">交通/活動方式:</span> {step.transport}
+                                </p>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 italic">
+                                    <span className="font-bold">備註:</span> {step.notes}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )) : (
+                    <div className="text-center py-10 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <p className="text-lg text-gray-500 dark:text-gray-400">此行程尚未有詳細的步驟規劃。</p>
+                        <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">請聯繫行程規劃者提供進一步資訊。</p>
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -763,14 +885,32 @@ const MultiDayCard = ({ day }) => {
 
 const App = () => {
   const [view, setView] = useState('MultiDay'); // 預設顯示多日行程
-  const headerRef = useRef(null); // 用於滾動到頂部
+  const [selectedDayDetails, setSelectedDayDetails] = useState(null); // 新增狀態：用於單日詳細行程
+  const headerRef = useRef(null); 
 
   // 切換視圖時滾動到頁面頂部
   const toggleView = (newView) => {
     setView(newView);
+    setSelectedDayDetails(null); // 重設詳細行程狀態
     if (headerRef.current) {
         headerRef.current.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+  
+  // 處理點擊多日行程卡片事件
+  const handleSelectDay = (dayData) => {
+      setSelectedDayDetails(dayData);
+      if (headerRef.current) {
+        headerRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+  };
+
+  // 處理返回總覽
+  const handleBackToMultiDay = () => {
+      setSelectedDayDetails(null);
+      if (headerRef.current) {
+        headerRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
   };
 
   // 根據當前視圖獲取按鈕樣式
@@ -779,7 +919,6 @@ const App = () => {
     let baseClasses = "flex-1 flex items-center justify-center space-x-2 px-3 py-2 sm:px-4 sm:py-3 rounded-xl font-semibold text-sm transition-all duration-300 shadow-inner";
     
     if (isActive) {
-      // 根據不同的視圖設置不同的強調色
       if (targetView === 'MultiDay') {
         return `${baseClasses} bg-blue-600 text-white shadow-blue-500/50 hover:bg-blue-700`;
       } else if (targetView === 'Sunny') {
@@ -789,7 +928,6 @@ const App = () => {
       }
     }
     
-    // 非活動狀態
     return `${baseClasses} bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600`;
   };
   
@@ -798,10 +936,15 @@ const App = () => {
   let currentSubtitle = "瑞士阿爾卑斯山區精華與義大利文藝復興/古羅馬巡禮。";
   let content = <AccommodationInfo data={ACCOMMODATION_DATA} generateGoogleMapsUrl={generateGoogleMapsUrl} />;
   
-  if (view === 'MultiDay') {
+  // 判斷是否顯示單日詳細行程
+  if (selectedDayDetails) {
+      currentTitle = `${selectedDayDetails.day} - ${selectedDayDetails.base} 詳細行程`;
+      currentSubtitle = "以下是該日詳細的交通、住宿與景點時間表。";
+      content = <DayDetailView day={selectedDayDetails} onBack={handleBackToMultiDay} />;
+  } else if (view === 'MultiDay') {
     // 多日行程 (包含住宿資訊)
     currentTitle = "20 天瑞義經典行程 (12/28 - 1/16)";
-    currentSubtitle = "瑞士阿爾卑斯山區精華與義大利文藝復興/古羅馬巡禮。";
+    currentSubtitle = "瑞士阿爾卑斯山區精華與義大利文藝復興/古羅馬巡禮。點擊有詳細規劃的日期查看步驟。";
     content = (
       <div className="space-y-10">
         <AccommodationInfo data={ACCOMMODATION_DATA} generateGoogleMapsUrl={generateGoogleMapsUrl} />
@@ -814,7 +957,7 @@ const App = () => {
                 {/* 時間軸線條 */}
                 <div className="absolute left-[13px] sm:left-[17px] top-0 bottom-0 w-px bg-gray-300 dark:bg-gray-600"></div>
                 {MULTI_DAY_ITINERARY.map((day, index) => (
-                    <MultiDayCard key={index} day={day} />
+                    <MultiDayCard key={index} day={day} onSelectDay={handleSelectDay} />
                 ))}
             </div>
         </div>
@@ -888,6 +1031,7 @@ const App = () => {
           <button
             onClick={() => toggleView('MultiDay')}
             className={viewButtonClasses('MultiDay')}
+            disabled={selectedDayDetails !== null} // 在詳細頁面時禁用
           >
             <CalendarDays className="w-5 h-5" />
             <span className='hidden sm:inline'>20 天瑞義經典行程</span>
@@ -898,6 +1042,7 @@ const App = () => {
           <button
             onClick={() => toggleView('Sunny')}
             className={viewButtonClasses('Sunny')}
+            disabled={selectedDayDetails !== null} // 在詳細頁面時禁用
           >
             <Sun className="w-5 h-5" />
             <span>因特拉肯 晴天日遊</span>
@@ -908,6 +1053,7 @@ const App = () => {
           <button
             onClick={() => toggleView('Rainy')}
             className={viewButtonClasses('Rainy')}
+            disabled={selectedDayDetails !== null} // 在詳細頁面時禁用
             >
             <CloudRain className="w-5 h-5" />
             <span>因特拉肯 雨天備案</span>
@@ -923,7 +1069,7 @@ const App = () => {
       
       {/* 頁腳 */}
       <footer className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-gray-400 dark:text-gray-600 text-sm border-t border-gray-200 dark:border-gray-700 mt-10">
-        <p>旅行計畫 v1.1 | 數據來源：使用者提供之最新行程表</p>
+        <p>旅行計畫 v1.2 | 數據來源：使用者提供之最新行程表</p>
         <p>建議：所有交通、門票與住宿資訊請以官方最新公告為準。</p>
       </footer>
     </div>
