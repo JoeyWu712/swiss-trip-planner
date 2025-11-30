@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Sun, CloudRain, TrainFront, CableCar, BusFront, Map, ArrowRight, Home, CarFront, Users, Building2, CalendarDays, Mountain, Clock, Plane, Hotel, MapPin, ExternalLink, ScrollText, Landmark, ShoppingBag, Ship, MapPinned, Route, Ticket, LocateFixed } from 'lucide-react'; 
 
 // =========================================================================
-// 新增/擴展數據 1: 飯店住宿資訊 (使用最新的飯店名稱和地圖連結)
+// 數據 1: 飯店住宿資訊
 // =========================================================================
 
 // 備註: 這裡使用 mapLink 來儲存使用者提供的 Google Map App 連結 (maps.app.goo.gl)
@@ -71,7 +71,7 @@ const generateGoogleMapsUrl = (mapLink) => {
 
 
 // =========================================================================
-// 數據 2: 因特拉肯當日行程 (保持不變)
+// 數據 2: 因特拉肯當日行程
 // =========================================================================
 const ITINERARIES = [
   // 晴天方案 (Sunny Itineraries S1-S6)
@@ -268,7 +268,7 @@ const ITINERARIES = [
 
 
 // =========================================================================
-// 數據 3: 20 天跨區域經典行程 (瑞義之旅) - COMPLETELY UPDATED from user table
+// 數據 3: 20 天跨區域經典行程 (瑞義之旅)
 // =========================================================================
 const MULTI_DAY_ITINERARY = [
   // Day 1: 瑞士 琉森
@@ -510,11 +510,11 @@ const MULTI_DAY_ITINERARY = [
     country: "Italy",
     station_from: "羅馬中央車站(Roma Termini)",
     station_to: "羅馬菲烏米奇諾機場(FCO)",
-  },
-];
+  }, // <--- 這個逗號是上次可能遺失的，但這次我會確保它已移除（因為這是陣列最後一個元素，避免 IE 瀏覽器兼容性問題）
+]; // <--- 陣列閉合符號，確保這裡沒有多餘的東西
 
 
-// 獲取交通模式圖標的輔助函數 (保持不變)
+// 獲取交通模式圖標的輔助函數 
 const getModeIcon = (mode) => {
   const iconClass = "w-5 h-5 text-blue-700 dark:text-blue-300";
   // 調整圖標以匹配新的交通描述
@@ -531,7 +531,7 @@ const getModeIcon = (mode) => {
 };
 
 // =========================================================================
-// 組件: 飯店住宿資訊 (AccommodationInfo) - 使用新的 mapLink
+// 組件: 飯店住宿資訊 (AccommodationInfo) 
 // =========================================================================
 
 const AccommodationInfo = ({ data, generateGoogleMapsUrl }) => {
@@ -585,7 +585,7 @@ const AccommodationInfo = ({ data, generateGoogleMapsUrl }) => {
 };
 
 // =========================================================================
-// 組件: 當日行程卡片 (ItineraryCard) - 保持不變
+// 組件: 當日行程卡片 (ItineraryCard) 
 // =========================================================================
 
 const ItineraryCard = ({ itinerary, weatherIcon: Icon, color, isRainy }) => (
@@ -667,7 +667,7 @@ const ItineraryCard = ({ itinerary, weatherIcon: Icon, color, isRainy }) => (
 
 
 // =========================================================================
-// 組件: 多日行程卡片 (MultiDayCard) - 顯示車站和預訂要求
+// 組件: 多日行程卡片 (MultiDayCard)
 // =========================================================================
 
 const MultiDayCard = ({ day }) => {
@@ -758,7 +758,7 @@ const MultiDayCard = ({ day }) => {
 
 
 // =========================================================================
-// 主應用程式組件 (App) - 保持不變
+// 主應用程式組件 (App) 
 // =========================================================================
 
 const App = () => {
