@@ -267,7 +267,7 @@ const ITINERARIES = [
 
 
 // =========================================================================
-// 數據 3: 20 天跨區域經典行程 (更新 Day 3-5)
+// 數據 3: 20 天跨區域經典行程 (更新 Day 8 轉乘時間)
 // =========================================================================
 const MULTI_DAY_ITINERARY = [
   // Day 1: 瑞士 琉森 (保持不變)
@@ -330,7 +330,7 @@ const MULTI_DAY_ITINERARY = [
     daily_steps: [] 
   },
   
-  // === Day 3: 更新內容為參考方案 ===
+  // Day 3: 更新內容為參考方案
   {
     day: "12/30 (Day 3)",
     base: "因特拉肯",
@@ -344,7 +344,7 @@ const MULTI_DAY_ITINERARY = [
     daily_steps: []
   },
   
-  // === Day 4: 更新內容為參考方案 ===
+  // Day 4: 更新內容為參考方案
   {
     day: "12/31 (Day 4)",
     base: "因特拉肯",
@@ -358,7 +358,7 @@ const MULTI_DAY_ITINERARY = [
     daily_steps: []
   },
 
-  // === Day 5: 更新內容為參考方案 ===
+  // Day 5: 更新內容為參考方案
   {
     day: "1/1 (Day 5)",
     base: "因特拉肯",
@@ -372,7 +372,7 @@ const MULTI_DAY_ITINERARY = [
     daily_steps: []
   },
   
-  // Day 6 - Day 20 (保持不變)
+  // Day 6 - Day 7 (保持不變)
   {
     day: "1/2 (Day 6)",
     base: "策馬特 (Zermatt)",
@@ -397,18 +397,63 @@ const MULTI_DAY_ITINERARY = [
     station_to: "策馬特冰川天堂(Matterhorn Glacier Paradise)",
     daily_steps: []
   },
+  
+  // Day 8: 瑞士 → 義大利 (更新轉乘時間，確保超過一小時)
   {
     day: "1/4 (Day 8)",
     base: "米蘭 (Milan)",
-    destination: "上午：策馬特 → 米蘭。下午：米蘭大教堂、艾曼紐二世迴廊。",
-    travel: "策馬特 → 米蘭：約3.5小時至4小時 (火車)。MGB/EC 列車",
-    recommendation: "強制或強烈建議。STP 涵蓋瑞士境內段。國際線 EC 列車通常需要額外購買座位預訂，或購買含預訂的優惠票。請務必在搭乘 EC 列車前完成預訂。",
-    duration: "3 小時 45 分鐘 – 4 小時 15 分鐘",
+    destination: "上午：策馬特 → Andermatt (冰川列車路段)。下午：經義語區進入米蘭。",
+    travel: "策馬特 → 米蘭：約8小時28分 (火車)。經 Andermatt、Göschenen 轉乘。",
+    recommendation: "強制或強烈建議。冰川列車路段需預訂。國際線 EC 列車通常需要額外購買座位預訂。請務必完成預訂。",
+    duration: "8 小時 28 分鐘",
     country: "Italy",
     station_from: "策馬特火車站(Zermatt train station)",
     station_to: "米蘭中央車站(Milano Centrale)",
-    daily_steps: []
+    daily_steps: [
+        {
+            time: "08:52 - 11:58",
+            title: "策馬特 → Andermatt (冰川列車路段精華)",
+            details: "從策馬特搭乘馬特洪哥達鐵路 (MGB) 列車，體驗世界著名的冰川列車 (Glacier Express) 部分路線。這段旅程景觀壯麗，包含高山隘口。",
+            transport: "MGB 區域火車",
+            notes: "此段路線通常需要預訂。抵達 Andermatt 後，有 1 小時 2 分鐘的寬裕轉乘時間。",
+            icon: "TrainFront",
+        },
+        {
+            time: "13:00 - 13:10",
+            title: "Andermatt → Göschenen (轉乘 I)",
+            details: "短程連接列車。利用轉乘時間在 Andermatt 稍事休息或探索車站周邊。",
+            transport: "MGB 區域火車",
+            notes: "車程僅 10 分鐘，抵達 Göschenen 後，有 1 小時 15 分鐘的寬裕轉乘時間。",
+            icon: "TrainFront",
+        },
+        {
+            time: "14:25 - 17:45",
+            title: "Göschenen → 米蘭中央車站 (Milano Centrale) (轉乘 II)",
+            details: "轉乘國際列車，經瑞士義語區 (Ticino) 進入米蘭。這是跨國長途段。請享受途中的風景。",
+            transport: "IC/EC 國際高鐵",
+            notes: "國際列車建議預訂座位。請確保護照和義大利高鐵票已備妥。抵達時間為義大利時間 (需調整時差)。",
+            icon: "TrainFront",
+        },
+        {
+            time: "18:30",
+            title: "米蘭中央車站 (Milano Centrale) → 飯店 Check-in",
+            details: "抵達米蘭，前往希爾頓米蘭酒店 (Hilton Milan) 辦理入住手續。",
+            transport: "地鐵/計程車",
+            notes: "米蘭中央車站周邊交通繁忙，可考慮搭乘地鐵綠線或黃線。",
+            icon: "Hotel",
+        },
+        {
+            time: "19:30 - 21:00",
+            title: "米蘭大教堂與艾曼紐二世迴廊 (夜景)",
+            details: "前往米蘭的標誌性景點，參觀米蘭大教堂 (Duomo) 及在迴廊 (Galleria Vittorio Emanuele II) 漫步。由於抵達時間較晚，主要以欣賞夜景為主。",
+            transport: "地鐵/步行",
+            notes: "大教堂內部可能已關閉，但可以在廣場欣賞壯觀的夜景。",
+            icon: "Landmark",
+        },
+    ]
   },
+  
+  // Day 9 - Day 20 (保持不變)
   {
     day: "1/5 (Day 9)",
     base: "威尼斯 (Venice)",
@@ -490,7 +535,7 @@ const MULTI_DAY_ITINERARY = [
     duration: "全天",
     country: "Italy",
     station_from: "市區內",
-    station_to: "米開朗基羅廣場",
+    station_to: "市區內",
     daily_steps: []
   },
   {
@@ -580,6 +625,7 @@ const getStepIcon = (iconName) => {
         case 'MapPinned': return <MapPinned className={iconClass} />;
         case 'ShoppingBag': return <ShoppingBag className={iconClass} />;
         case 'Plane': return <Plane className={iconClass} />;
+        case 'Landmark': return <Landmark className={iconClass} />;
         default: return <LocateFixed className={iconClass} />;
     }
 };
@@ -899,9 +945,12 @@ const App = () => {
   
   // 處理點擊多日行程卡片事件
   const handleSelectDay = (dayData) => {
-      setSelectedDayDetails(dayData);
-      if (headerRef.current) {
-        headerRef.current.scrollIntoView({ behavior: 'smooth' });
+      // 只有當 daily_steps 有內容時才切換到詳細視圖
+      if (dayData.daily_steps && dayData.daily_steps.length > 0) {
+          setSelectedDayDetails(dayData);
+          if (headerRef.current) {
+            headerRef.current.scrollIntoView({ behavior: 'smooth' });
+          }
       }
   };
 
