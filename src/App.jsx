@@ -402,7 +402,7 @@ const MULTI_DAY_ITINERARY = [
   {
     day: "1/4 (Day 8)",
     base: "米蘭 (Milan)",
-    destination: "上午：策馬特 → Andermatt (冰川列車路段)。下午：經義語區進入米蘭。",
+    destination: "上午：策馬特 → Andermatt (冰川列車路段精華)。下午：經義語區進入米蘭。",
     travel: "策馬特 → 米蘭：約8小時28分 (火車)。經 Andermatt、Göschenen 轉乘。",
     recommendation: "強制或強烈建議。冰川列車路段需預訂。國際線 EC 列車通常需要額外購買座位預訂。請務必完成預訂。",
     duration: "8 小時 28 分鐘",
