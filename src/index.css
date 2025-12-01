@@ -1,11 +1,28 @@
 /* src/index.css */
+
+/* 1. Tailwind 指令：必需 */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* 確保全域使用 Inter 字體 */
+/* 2. 全域基礎樣式（確保邊界模型正確） */
 @layer base {
+  /* 使用 border-box 讓 padding 不會撐開元素寬度 */
+  *, ::before, ::after {
+    box-sizing: border-box;
+  }
+  
+  /* 確保全域使用 Inter 字體 */
   html {
     font-family: 'Inter', sans-serif;
+  }
+  
+  /* 移除瀏覽器預設的 margin 和 padding */
+  body {
+    margin: 0;
+    padding: 0;
+    line-height: 1.5;
+    /* 讓背景顏色延伸到整個視窗 */
+    background-color: #f4f4f5; /* 配合您的 secondary-gray */
   }
 }
