@@ -1,16 +1,12 @@
-import React, { useState } from 'react';
-// 導入 Lucide Icons
-import { 
-  Sun, CloudRain, TrainFront, CableCar, BusFront, Map, ArrowRight, 
-  Home, CarFront, Users, Building2, CalendarDays, Mountain, Clock, 
-  Plane, Hotel, MapPin, ExternalLink, ScrollText, Landmark, ShoppingBag, 
-  Ship, MapPinned, Route, Ticket, LocateFixed, X, Coffee, Utensils
-} from 'lucide-react'; 
+import React, { useState, useEffect, useRef } from 'react';
+// 導入 Lucide Icons 用於交通模式和 UI 裝飾
+import { Sun, CloudRain, TrainFront, CableCar, BusFront, Map, ArrowRight, Home, CarFront, Users, Building2, CalendarDays, Mountain, Clock, Plane, Hotel, MapPin, ExternalLink, ScrollText, Landmark, ShoppingBag, Ship, MapPinned, Route, Ticket, LocateFixed, ArrowLeft } from 'lucide-react'; 
 
 // =========================================================================
 // 數據 1: 飯店住宿資訊
 // =========================================================================
 
+// 備註: 這裡使用 mapLink 來儲存使用者提供的 Google Map App 連結 (maps.app.goo.gl)
 const ACCOMMODATION_DATA = [
   {
     base: "琉森 (Lucerne)",
@@ -65,6 +61,8 @@ const ACCOMMODATION_DATA = [
 
 /**
  * 輔助函數：根據地址或連結產生 Google Maps URL
+ * @param {string} mapLink 飯店地圖連結
+ * @returns {string} Google Maps URL
  */
 const generateGoogleMapsUrl = (mapLink) => {
   return mapLink && mapLink.startsWith('http') ? mapLink : '#';
@@ -72,7 +70,7 @@ const generateGoogleMapsUrl = (mapLink) => {
 
 
 // =========================================================================
-// 數據 2: 因特拉肯當日行程 (Sunny/Rainy Options)
+// 數據 2: 因特拉肯當日行程 (ITINERARIES - 保持不變)
 // =========================================================================
 const ITINERARIES = [
   // 晴天方案 (Sunny Itineraries S1-S6)
@@ -269,10 +267,10 @@ const ITINERARIES = [
 
 
 // =========================================================================
-// 數據 3: 20 天跨區域經典行程
+// 數據 3: 20 天跨區域經典行程 (更新 Day 8 轉乘時間)
 // =========================================================================
 const MULTI_DAY_ITINERARY = [
-  // Day 1: 瑞士 琉森
+  // Day 1: 瑞士 琉森 (保持不變)
   {
     day: "12/28 (Day 1)",
     base: "琉森 (Lucerne)",
@@ -318,7 +316,7 @@ const MULTI_DAY_ITINERARY = [
       },
     ]
   },
-  // Day 2: 瑞士 因特拉肯
+  // Day 2: 瑞士 因特拉肯 (保持不變)
   {
     day: "12/29 (Day 2)",
     base: "因特拉肯 (Interlaken)",
@@ -374,7 +372,7 @@ const MULTI_DAY_ITINERARY = [
     daily_steps: []
   },
   
-  // Day 6 - Day 7
+  // Day 6 - Day 7 (保持不變)
   {
     day: "1/2 (Day 6)",
     base: "策馬特 (Zermatt)",
@@ -395,12 +393,12 @@ const MULTI_DAY_ITINERARY = [
     recommendation: "冰川天堂纜車通常有折扣，請善用 Swiss Travel Pass 購買優惠票。",
     duration: "約 45 分鐘",
     country: "Switzerland",
-    station_from: "Täsch", 
+    station_from: "Täsch", // Täsch 是策馬特門戶，這裡可能是指從 Täsch 停車場接駁
     station_to: "策馬特冰川天堂(Matterhorn Glacier Paradise)",
     daily_steps: []
   },
   
-  // Day 8: 瑞士 → 義大利
+  // Day 8: 瑞士 → 義大利 (更新轉乘時間，確保超過一小時)
   {
     day: "1/4 (Day 8)",
     base: "米蘭 (Milan)",
@@ -455,7 +453,7 @@ const MULTI_DAY_ITINERARY = [
     ]
   },
   
-  // Day 9 - Day 20
+  // Day 9 - Day 20 (保持不變)
   {
     day: "1/5 (Day 9)",
     base: "威尼斯 (Venice)",
@@ -839,12 +837,11 @@ const MultiDayCard = ({ day, onSelectDay }) => {
                 <div className="text-sm border-t pt-3 border-gray-200 dark:border-gray-700 mb-2">
                     <p className="text-gray-700 dark:text-gray-300 flex items-center mb-1">
                         <TrainFront className="w-4 h-4 mr-2 text-blue-600 flex-shrink-0" />
-                        <span className="font-semibold text-gray-900 dark:text-white mr-2">交通移動:</span>
-                        {day.travel}
+                        <span className="font-semibold mr-1">交通方式:</span> {day.travel}
                     </p>
-                    <p className={`${recClass} flex items-start`}>
+                    <p className={`${recClass} flex items-start text-sm mt-3`}>
                         {recIcon}
-                        <span><span className="font-semibold mr-1">建議:</span> {day.recommendation}</span>
+                        <span className="font-semibold mr-1">預訂建議:</span> {day.recommendation}
                     </p>
                 </div>
             </div>
@@ -853,226 +850,279 @@ const MultiDayCard = ({ day, onSelectDay }) => {
 };
 
 // =========================================================================
-// 主程式組件 (App)
+// 組件: 單日詳細行程檢視 (DayDetailView)
 // =========================================================================
 
-export default function App() {
-  const [activeTab, setActiveTab] = useState('Total'); // 'Total', 'Accommodation', 'Sunny', 'Rainy'
-  const [selectedDayDetails, setSelectedDayDetails] = useState(null);
+const DayDetailView = ({ day, onBack }) => {
+    const isSwiss = day.country === 'Switzerland';
+    const bgColor = isSwiss ? 'bg-red-50 dark:bg-red-900/20' : 'bg-green-50 dark:bg-green-900/20';
+    const borderColor = isSwiss ? 'border-red-500' : 'border-green-600';
 
-  // 切換分頁時重置詳細頁面
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    setSelectedDayDetails(null);
-  };
-
-  const getTabColor = (tabName, defaultColor, activeColor) => {
-    return activeTab === tabName ? activeColor : defaultColor;
-  };
-
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
-      
-      {/* 導航欄 */}
-      <nav className="bg-white dark:bg-gray-800 sticky top-0 z-40 shadow-sm border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center gap-2">
-              <div className="p-2 bg-indigo-600 rounded-lg text-white">
-                <Map className="w-6 h-6" />
-              </div>
-              <div>
-                <h1 className="text-lg font-bold text-gray-900 dark:text-white leading-none">瑞義 20 天</h1>
-                <span className="text-xs text-gray-500 dark:text-gray-400">Swiss & Italy Planner</span>
-              </div>
-            </div>
-            
-            <div className="flex space-x-2 overflow-x-auto scrollbar-hide">
-              <button
-                onClick={() => handleTabChange('Total')}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
-                    activeTab === 'Total' 
-                    ? 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300' 
-                    : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
-                }`}
-              >
-                <CalendarDays className="w-4 h-4 inline-block mr-1" />
-                總行程
-              </button>
-              <button
-                onClick={() => handleTabChange('Accommodation')}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
-                    activeTab === 'Accommodation' 
-                    ? 'bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-300' 
-                    : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
-                }`}
-              >
-                <Hotel className="w-4 h-4 inline-block mr-1" />
-                住宿
-              </button>
-              <button
-                onClick={() => handleTabChange('Sunny')}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
-                    activeTab === 'Sunny' 
-                    ? 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300' 
-                    : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
-                }`}
-              >
-                <Sun className="w-4 h-4 inline-block mr-1" />
-                晴天方案
-              </button>
-              <button
-                onClick={() => handleTabChange('Rainy')}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
-                    activeTab === 'Rainy' 
-                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' 
-                    : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
-                }`}
-              >
-                <CloudRain className="w-4 h-4 inline-block mr-1" />
-                雨天備案
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24">
-        
-        {/* === 住宿頁面 === */}
-        {activeTab === 'Accommodation' && (
-          <div className="animate-fade-in">
-             <AccommodationInfo data={ACCOMMODATION_DATA} generateGoogleMapsUrl={generateGoogleMapsUrl} />
-          </div>
-        )}
-
-        {/* === 晴天/雨天方案頁面 === */}
-        {(activeTab === 'Sunny' || activeTab === 'Rainy') && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
-                {ITINERARIES
-                    .filter(item => item.type === activeTab)
-                    .map(item => (
-                        <ItineraryCard 
-                            key={item.id} 
-                            itinerary={item} 
-                            weatherIcon={activeTab === 'Sunny' ? Sun : CloudRain}
-                            color={activeTab === 'Sunny' ? 'border-yellow-400' : 'border-blue-400'}
-                            isRainy={activeTab === 'Rainy'}
-                        />
-                    ))
-                }
-            </div>
-        )}
-
-        {/* === 總行程頁面 === */}
-        {activeTab === 'Total' && (
-            <div className="max-w-4xl mx-auto animate-fade-in">
-                <div className="mb-8 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-purple-100 dark:border-gray-700">
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">20 天瑞義深度跨國之旅</h2>
-                    <p className="text-gray-600 dark:text-gray-400">
-                        從瑞士的湖光山色到義大利的文藝復興，這是一趟結合自然奇觀與人文歷史的經典路線。
-                        點擊標有箭頭的卡片可查看當日詳細時間軸。
+    return (
+        <div className="bg-white dark:bg-gray-800 shadow-xl rounded-xl p-6 sm:p-8 space-y-8">
+            {/* 頂部標題與返回按鈕 */}
+            <div className="flex items-center justify-between border-b pb-4 border-gray-200 dark:border-gray-700">
+                <div className="flex flex-col">
+                    <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
+                        <span className={`text-xl font-medium ${isSwiss ? 'text-red-600' : 'text-green-600'} mr-2`}>
+                            {day.day}
+                        </span>
+                        {day.base} 詳細計畫
+                    </h2>
+                    <p className="text-gray-500 dark:text-gray-400 mt-1">
+                        {day.destination}
                     </p>
                 </div>
-                <div className="relative">
-                    {MULTI_DAY_ITINERARY.map((day, index) => (
-                        <MultiDayCard 
-                            key={index} 
-                            day={day} 
-                            onSelectDay={setSelectedDayDetails}
-                        />
-                    ))}
-                </div>
+                <button
+                    onClick={onBack}
+                    className="flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 font-medium transition duration-150 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                    <ArrowLeft className="w-5 h-5 mr-1" />
+                    返回總覽
+                </button>
             </div>
-        )}
 
-        {/* === 詳細行程 Modal === */}
-        {selectedDayDetails && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-                <div 
-                    className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity"
-                    onClick={() => setSelectedDayDetails(null)}
-                ></div>
-                <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden shadow-2xl relative z-10 flex flex-col animate-scale-in">
-                    {/* Modal Header */}
-                    <div className="p-6 bg-indigo-50 dark:bg-gray-700 flex justify-between items-start border-b border-indigo-100 dark:border-gray-600">
-                        <div>
-                            <span className="inline-block px-2 py-1 bg-white/50 dark:bg-black/20 rounded text-xs font-bold text-indigo-600 dark:text-indigo-300 mb-2">
-                                {selectedDayDetails.day}
-                            </span>
-                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">當日詳細時間軸</h2>
+            {/* 詳細步驟時間軸 */}
+            <div className="relative pl-5 sm:pl-8">
+                {/* 時間軸線 */}
+                <div className={`absolute left-0 top-0 bottom-0 w-1 ${borderColor} opacity-70`}></div>
+                
+                {day.daily_steps.length > 0 ? day.daily_steps.map((step, index) => (
+                    <div key={index} className="flex mb-8 items-start relative">
+                        {/* 圓點與圖標 */}
+                        <div className={`absolute -left-[18px] sm:-left-[20px] top-0 p-1.5 rounded-full ${isSwiss ? 'bg-red-500' : 'bg-green-600'} shadow-lg ring-4 ring-white dark:ring-gray-800`}>
+                            {getStepIcon(step.icon)}
                         </div>
-                        <button 
-                            onClick={() => setSelectedDayDetails(null)}
-                            className="p-2 bg-white dark:bg-gray-600 rounded-full text-gray-500 dark:text-gray-300 hover:text-gray-900 hover:bg-gray-100 transition-colors shadow-sm"
-                        >
-                            <X className="w-5 h-5" />
-                        </button>
-                    </div>
-
-                    {/* Modal Body */}
-                    <div className="p-6 overflow-y-auto custom-scrollbar">
-                        <div className="relative pl-4 border-l-2 border-indigo-100 dark:border-gray-600 space-y-8">
-                            {selectedDayDetails.daily_steps.map((step, idx) => (
-                                <div key={idx} className="relative">
-                                    {/* Timeline Dot */}
-                                    <div className="absolute -left-[25px] top-0 w-5 h-5 rounded-full bg-indigo-500 border-4 border-white dark:border-gray-800 flex items-center justify-center">
-                                    </div>
-                                    
-                                    <div className="flex items-center mb-1">
-                                        <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 rounded">
-                                            {step.time}
-                                        </span>
-                                    </div>
-                                    
-                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 flex items-center">
-                                        {getStepIcon(step.icon)}
-                                        <span className="ml-2">{step.title}</span>
-                                    </h3>
-                                    
-                                    <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl border border-gray-100 dark:border-gray-600">
-                                        <p className="text-gray-700 dark:text-gray-300 mb-3 leading-relaxed">
-                                            {step.details}
-                                        </p>
-                                        
-                                        <div className="flex flex-col sm:flex-row gap-3 text-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-600 pt-3">
-                                            <span className="flex items-center">
-                                                <TrainFront className="w-4 h-4 mr-1.5 text-blue-500" />
-                                                {step.transport}
-                                            </span>
-                                            {step.notes && (
-                                                <span className="flex items-start">
-                                                    <Coffee className="w-4 h-4 mr-1.5 text-orange-500 flex-shrink-0 mt-0.5" />
-                                                    {step.notes}
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
+                        
+                        {/* 步驟內容 */}
+                        <div className={`flex-1 min-w-0 ml-4 sm:ml-0 p-4 rounded-lg shadow-sm border ${borderColor} border-opacity-30 ${bgColor}`}>
+                            <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1 flex items-center">
+                                <Clock className="w-4 h-4 mr-1" />
+                                {step.time}
+                            </p>
+                            <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{step.title}</h4>
+                            <p className="text-gray-700 dark:text-gray-300 text-base mb-2">{step.details}</p>
+                            
+                            <div className="mt-3 pt-3 border-t border-gray-300 dark:border-gray-600 space-y-1">
+                                <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">
+                                    <span className="font-bold">交通/活動方式:</span> {step.transport}
+                                </p>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 italic">
+                                    <span className="font-bold">備註:</span> {step.notes}
+                                </p>
+                            </div>
                         </div>
                     </div>
-
-                    {/* Modal Footer */}
-                    <div className="p-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex justify-end">
-                        <button 
-                            onClick={() => setSelectedDayDetails(null)}
-                            className="px-6 py-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg font-medium hover:opacity-90 transition-opacity"
-                        >
-                            關閉
-                        </button>
+                )) : (
+                    <div className="text-center py-10 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <p className="text-lg text-gray-500 dark:text-gray-400">此行程尚未有詳細的步驟規劃。</p>
+                        <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">請聯繫行程規劃者提供進一步資訊。</p>
                     </div>
-                </div>
+                )}
             </div>
-        )}
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-8">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-           <p className="text-sm text-gray-400">© 2025 Swiss & Italy Trip Planner</p>
         </div>
+    );
+};
+
+
+// =========================================================================
+// 主應用程式組件 (App) 
+// =========================================================================
+
+const App = () => {
+  const [view, setView] = useState('MultiDay'); // 預設顯示多日行程
+  const [selectedDayDetails, setSelectedDayDetails] = useState(null); // 新增狀態：用於單日詳細行程
+  const headerRef = useRef(null); 
+
+  // 切換視圖時滾動到頁面頂部
+  const toggleView = (newView) => {
+    setView(newView);
+    setSelectedDayDetails(null); // 重設詳細行程狀態
+    if (headerRef.current) {
+        headerRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+  
+  // 處理點擊多日行程卡片事件
+  const handleSelectDay = (dayData) => {
+      // 只有當 daily_steps 有內容時才切換到詳細視圖
+      if (dayData.daily_steps && dayData.daily_steps.length > 0) {
+          setSelectedDayDetails(dayData);
+          if (headerRef.current) {
+            headerRef.current.scrollIntoView({ behavior: 'smooth' });
+          }
+      }
+  };
+
+  // 處理返回總覽
+  const handleBackToMultiDay = () => {
+      setSelectedDayDetails(null);
+      if (headerRef.current) {
+        headerRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+  };
+
+  // 根據當前視圖獲取按鈕樣式
+  const viewButtonClasses = (targetView) => {
+    const isActive = view === targetView;
+    let baseClasses = "flex-1 flex items-center justify-center space-x-2 px-3 py-2 sm:px-4 sm:py-3 rounded-xl font-semibold text-sm transition-all duration-300 shadow-inner";
+    
+    if (isActive) {
+      if (targetView === 'MultiDay') {
+        return `${baseClasses} bg-blue-600 text-white shadow-blue-500/50 hover:bg-blue-700`;
+      } else if (targetView === 'Sunny') {
+        return `${baseClasses} bg-yellow-500 text-white shadow-yellow-500/50 hover:bg-yellow-600`;
+      } else if (targetView === 'Rainy') {
+        return `${baseClasses} bg-gray-600 text-white shadow-gray-500/50 hover:bg-gray-700`;
+      }
+    }
+    
+    return `${baseClasses} bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600`;
+  };
+  
+  // 根據當前視圖動態設定標題和內容
+  let currentTitle = "20 天瑞義經典行程 (12/28 - 1/16)";
+  let currentSubtitle = "瑞士阿爾卑斯山區精華與義大利文藝復興/古羅馬巡禮。";
+  let content = <AccommodationInfo data={ACCOMMODATION_DATA} generateGoogleMapsUrl={generateGoogleMapsUrl} />;
+  
+  // 判斷是否顯示單日詳細行程
+  if (selectedDayDetails) {
+      currentTitle = `${selectedDayDetails.day} - ${selectedDayDetails.base} 詳細行程`;
+      currentSubtitle = "以下是該日詳細的交通、住宿與景點時間表。";
+      content = <DayDetailView day={selectedDayDetails} onBack={handleBackToMultiDay} />;
+  } else if (view === 'MultiDay') {
+    // 多日行程 (包含住宿資訊)
+    currentTitle = "20 天瑞義經典行程 (12/28 - 1/16)";
+    currentSubtitle = "瑞士阿爾卑斯山區精華與義大利文藝復興/古羅馬巡禮。點擊有詳細規劃的日期查看步驟。";
+    content = (
+      <div className="space-y-10">
+        <AccommodationInfo data={ACCOMMODATION_DATA} generateGoogleMapsUrl={generateGoogleMapsUrl} />
+        <div className="bg-white dark:bg-gray-800 shadow-xl rounded-xl p-6 sm:p-8">
+            <h2 className="text-3xl font-extrabold text-blue-800 dark:text-blue-300 flex items-center mb-8 border-b pb-3 border-blue-100 dark:border-gray-700">
+                <MapPinned className="w-7 h-7 mr-3 text-red-500" />
+                每日路線規劃
+            </h2>
+            <div className="relative">
+                {/* 時間軸線條 */}
+                <div className="absolute left-[13px] sm:left-[17px] top-0 bottom-0 w-px bg-gray-300 dark:bg-gray-600"></div>
+                {MULTI_DAY_ITINERARY.map((day, index) => (
+                    <MultiDayCard key={index} day={day} onSelectDay={handleSelectDay} />
+                ))}
+            </div>
+        </div>
+      </div>
+    );
+  } else if (view === 'Sunny') {
+    // 晴天方案
+    currentTitle = "因特拉肯地區：晴天日遊首選";
+    currentSubtitle = `共 ${ITINERARIES.filter(i => i.type === 'Sunny').length} 個方案。天氣晴朗時，務必登高！`;
+    const sunnyItineraries = ITINERARIES.filter(i => i.type === 'Sunny');
+    content = (
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+        {sunnyItineraries.map(item => (
+          <ItineraryCard 
+            key={item.id} 
+            itinerary={item} 
+            weatherIcon={Sun} 
+            color="border-yellow-500"
+            isRainy={false}
+          />
+        ))}
+      </div>
+    );
+  } else if (view === 'Rainy') {
+    // 雨天備案
+    currentTitle = "因特拉肯地區：雨天或風雪備案";
+    currentSubtitle = `共 ${ITINERARIES.filter(i => i.type === 'Rainy').length} 個室內或低海拔方案。風雪來襲也能玩得盡興。`;
+    const rainyItineraries = ITINERARIES.filter(i => i.type === 'Rainy');
+    content = (
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+        {rainyItineraries.map(item => (
+          <ItineraryCard 
+            key={item.id} 
+            itinerary={item} 
+            weatherIcon={CloudRain} 
+            color="border-gray-600"
+            isRainy={true}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 font-sans">
+      {/* 頂部標題與裝飾區 */}
+      <div 
+        ref={headerRef} 
+        className="bg-gradient-to-r from-blue-600 to-teal-500 dark:from-blue-800 dark:to-teal-600 text-white pt-12 pb-24 shadow-2xl"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center space-x-4 mb-4">
+              <Home className="w-8 h-8 text-yellow-300"/>
+              <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">
+                瑞義精華之旅
+              </h1>
+          </div>
+          <p className="text-blue-200 dark:text-blue-300 text-xl max-w-2xl">
+            {currentTitle}
+          </p>
+          <p className="text-blue-100 dark:text-blue-400 text-base mt-1">
+            {currentSubtitle}
+          </p>
+        </div>
+      </div>
+
+      {/* 模式切換按鈕 - 現代膠囊設計，強調選中狀態的顏色 */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 z-20 relative">
+        <div className="flex flex-col sm:flex-row rounded-2xl shadow-2xl overflow-hidden bg-white dark:bg-gray-800 p-3 space-y-3 sm:space-y-0 sm:space-x-3">
+          {/* 多日行程 - 主色調 */}
+          <button
+            onClick={() => toggleView('MultiDay')}
+            className={viewButtonClasses('MultiDay')}
+            disabled={selectedDayDetails !== null} // 在詳細頁面時禁用
+          >
+            <CalendarDays className="w-5 h-5" />
+            <span className='hidden sm:inline'>20 天瑞義經典行程</span>
+            <span className='inline sm:hidden'>多日計畫</span>
+          </button>
+
+          {/* 晴天行程 - 暖色系強調 */}
+          <button
+            onClick={() => toggleView('Sunny')}
+            className={viewButtonClasses('Sunny')}
+            disabled={selectedDayDetails !== null} // 在詳細頁面時禁用
+          >
+            <Sun className="w-5 h-5" />
+            <span>因特拉肯 晴天日遊</span>
+            <span className='text-xs'>({ITINERARIES.filter(i => i.type === 'Sunny').length})</span>
+          </button>
+          
+          {/* 雨天備案 - 冷色系強調 */}
+          <button
+            onClick={() => toggleView('Rainy')}
+            className={viewButtonClasses('Rainy')}
+            disabled={selectedDayDetails !== null} // 在詳細頁面時禁用
+            >
+            <CloudRain className="w-5 h-5" />
+            <span>因特拉肯 雨天備案</span>
+            <span className='text-xs'>({ITINERARIES.filter(i => i.type === 'Rainy').length})</span>
+          </button>
+        </div>
+      </div>
+
+      {/* 內容區塊 */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 relative z-10">
+        {content}
+      </main>
+      
+      {/* 頁腳 */}
+      <footer className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-gray-400 dark:text-gray-600 text-sm border-t border-gray-200 dark:border-gray-700 mt-10">
+        <p>旅行計畫 v1.2 | 數據來源：使用者提供之最新行程表</p>
+        <p>建議：所有交通、門票與住宿資訊請以官方最新公告為準。</p>
       </footer>
     </div>
   );
-}
+};
+
+export default App;
